@@ -1,0 +1,12 @@
+﻿{
+  "profiles": {
+    "BookLibraryKestrel": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:50816",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

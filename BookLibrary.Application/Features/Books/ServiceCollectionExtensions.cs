@@ -1,0 +1,26 @@
+﻿using BookLibrary.Application.Features.Books.AddNewBook;
+using BookLibrary.Application.Features.Books.GetBook;
+using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
+
+namespace BookLibrary.Application.Features.Books;
+
+/// <summary>
+/// Extensions methods for <see cref="IServiceCollection"/>.
+/// </summary>
+[ExcludeFromCodeCoverage]
+internal static class ServiceCollectionExtensions
+{
+    /// <summary>
+    /// Register books features.
+    /// </summary>
+    /// <param name="services">Service registrator.</param>
+    /// <returns>Service registrator.</returns>
+    public static IServiceCollection AddBooksFeatures(this IServiceCollection services)
+    {
+        services.AddScoped<AddNewBookUseCase>();
+        services.AddScoped<GetBookUseCase>();
+
+        return services;
+    }
+}
