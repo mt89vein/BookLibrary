@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sstv.DomainExceptions.Extensions.ProblemDetails;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BookLibrary.Api.Features;
 
@@ -132,6 +133,7 @@ internal sealed class AddNewBookAuthorModelValidator : AbstractValidator<AddNewB
 /// Example of request for adding new books.
 /// </summary>
 [UsedImplicitly]
+[ExcludeFromCodeCoverage]
 internal sealed class AddNewBooksModelExample : IExamplesProvider<AddNewBooksModel>
 {
     public AddNewBooksModel GetExamples()

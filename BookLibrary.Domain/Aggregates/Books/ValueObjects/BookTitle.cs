@@ -34,6 +34,13 @@ public sealed class BookTitle : ValueObject
         return Value;
     }
 
+    public static implicit operator string(BookTitle title)
+    {
+        ArgumentNullException.ThrowIfNull(title);
+
+        return title.Value;
+    }
+
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return Value;

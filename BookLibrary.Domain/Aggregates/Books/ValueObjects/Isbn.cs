@@ -43,6 +43,13 @@ public sealed partial class Isbn : ValueObject
         return Value;
     }
 
+    public static implicit operator string(Isbn isbn)
+    {
+        ArgumentNullException.ThrowIfNull(isbn);
+
+        return isbn.Value;
+    }
+
     [GeneratedRegex(@"^(\d{9}(?:\d|X)|(\d{12}(?:\d|X)))$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex GetIsbnRegex();
 }

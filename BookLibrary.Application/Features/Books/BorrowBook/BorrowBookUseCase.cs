@@ -12,12 +12,14 @@ namespace BookLibrary.Application.Features.Books.BorrowBook;
 /// Borrow book command.
 /// </summary>
 /// <param name="AbonentId">Aboonent identifier.</param>
+/// <param name="BookId">Book identifier.</param>
 /// <param name="Isbn">ISBN.</param>
 /// <param name="PublicationDate">Book publication date.</param>
 /// <param name="ReturnDate">Date when abonent what to return book.</param>
 public sealed record BorrowBookCommand(
     Guid AbonentId,
-    string Isbn,
+    Guid? BookId,
+    string? Isbn,
     DateOnly? PublicationDate,
     DateOnly? ReturnDate
 );
@@ -57,6 +59,7 @@ public sealed class BorrowBookUseCase
         using var _ = _logger.BeginScope(new Dictionary<string, object?>
         {
             ["AbonentId"] = command.AbonentId.ToString(),
+            ["BookId"] = command.BookId?.ToString(),
             ["ISBN"] = command.Isbn,
             ["PublicationDate"] = command.PublicationDate?.ToString() ?? "N/A",
             ["ReturnDate"] = command.ReturnDate?.ToString() ?? "N/A"
@@ -95,16 +98,24 @@ public sealed class BorrowBookUseCase
     /// </exception>
     private async Task<Book> FetchBookAsync(BorrowBookCommand command, CancellationToken ct)
     {
-        var book = await _ctx.Books
+        if (command.BookId.HasValue)
+        {
+            return await _ctx.Books
+                .AsTracking()
+                .FirstOrDefaultAsync(
+                    x => x.Id == new BookId(command.BookId.Value),
+                    ct
+                ) ?? throw ErrorCodes.BookNotFound.ToException();
+        }
+
+        return await _ctx.Books
             .AsTracking()
             .FirstOrDefaultAsync(
-            x => x.Isbn == new Isbn(command.Isbn) &&
+            x => x.Isbn == new Isbn(command.Isbn!) &&
                  (command.PublicationDate == null || x.PublicationDate == new BookPublicationDate(command.PublicationDate.Value)) &&
                  x.BorrowInfo == null,
             ct
         ) ?? throw ErrorCodes.ThereNoBookThatCanBeBorrowed.ToException();
-
-        return book;
     }
 
     /// <summary>

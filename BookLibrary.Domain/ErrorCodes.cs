@@ -103,4 +103,7 @@ public enum ErrorCodes
 
     [ErrorDescription(Description = "Book returning failed")]
     BookReturningFailed = 30,
+
+    [ErrorDescription(Description = "Borrowed books getting failed")]
+    BorrowedBooksGettingFailed = 31,
 }

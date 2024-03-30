@@ -1,9 +1,17 @@
 ﻿using BookLibrary.Application.Infrastructure;
+using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Domain.Exceptions;
 using Microsoft.Extensions.Logging;
 
 namespace BookLibrary.Application.Features.Books.GetBook;
+
+/// <summary>
+/// Query for getting book by id.
+/// </summary>
+/// <param name="BookId">Book identifier.</param>
+/// <param name="AbonentId">Abonent identifier.</param>
+public sealed record GetBookByIdQuery(Guid BookId, Guid AbonentId);
 
 /// <summary>
 /// UseCase - get book by id.
@@ -25,30 +33,32 @@ public sealed class GetBookUseCase
     /// <summary>
     /// Execute the UseCase.
     /// </summary>
-    /// <param name="bookId">Book identifier.</param>
+    /// <param name="query">Query.</param>
     /// <param name="ct">Token to cancel operation.</param>
     /// <exception cref="BookLibraryException">
     /// When there are problem with getting book by id.
     /// </exception>
-    public async Task<BookDto> ExecuteAsync(Guid bookId, CancellationToken ct = default)
+    public async Task<BookDto> ExecuteAsync(GetBookByIdQuery query, CancellationToken ct = default)
     {
-        var bookIdentifier = new BookId(bookId);
+        ArgumentNullException.ThrowIfNull(query);
+
+        var bookId = new BookId(query.BookId);
 
         using var _ = _logger.BeginScope(new Dictionary<string, object?>
         {
-            ["BookId"] = bookIdentifier.ToString()
+            ["BookId"] = bookId.ToString()
         });
 
         try
         {
             _logger.LogDebug("Getting book by id");
 
-            var book = await _ctx.Books.FindAsync([bookIdentifier], ct)
+            var book = await _ctx.Books.FindAsync([bookId], ct)
                        ?? throw ErrorCodes.BookNotFound.ToException();
 
             _logger.LogDebug("Successfully get book by id");
 
-            return new BookDto(book);
+            return new BookDto(book, new AbonentId(query.AbonentId));
         }
         catch (Exception e) when (e is not BookLibraryException)
         {
@@ -101,7 +111,8 @@ public sealed class BookDto
     /// Creates new instance of <see cref="BookDto"/> from <see cref="Book"/>.
     /// </summary>
     /// <param name="book">Book.</param>
-    public BookDto(Book book)
+    /// <param name="abonentId">AbonentId, that requests book by id.</param>
+    public BookDto(Book book, AbonentId abonentId)
     {
         ArgumentNullException.ThrowIfNull(book);
 
@@ -110,9 +121,7 @@ public sealed class BookDto
         Isbn = book.Isbn.Value;
         PublicationDate = book.PublicationDate.Value;
         Authors = book.Authors.Select(x => new AuthorDto(x)).ToArray();
-        BorrowInfo = book.BorrowInfo is not null
-            ? new BorrowInfoDto(book.BorrowInfo)
-            : null;
+        BorrowInfo = new BorrowInfoDto(book.BorrowInfo, abonentId);
     }
 }
 
@@ -161,19 +170,19 @@ public sealed class AuthorDto
 public sealed class BorrowInfoDto
 {
     /// <summary>
-    /// Abonent identifier.
+    /// Book status.
     /// </summary>
-    public Guid AbonentId { get; set; }
+    public string Status { get; set; } = null!;
 
     /// <summary>
     /// DateTime when book was borrowed.
     /// </summary>
-    public DateTimeOffset BorrowedAt { get; set; }
+    public DateTimeOffset? BorrowedAt { get; set; }
 
     /// <summary>
     /// Date when book must be returned.
     /// </summary>
-    public DateOnly ReturnBefore { get; set; }
+    public DateOnly? ReturnBefore { get; set; }
 
     /// <summary>
     /// Creates empty instance.
@@ -184,12 +193,19 @@ public sealed class BorrowInfoDto
     /// Creates new instance of <see cref="BorrowInfoDto"/> from <see cref="BorrowInfo"/>.
     /// </summary>
     /// <param name="borrowInfo">Book borrowing info.</param>
-    public BorrowInfoDto(BorrowInfo borrowInfo)
+    /// <param name="abonentId">AbonentId, that requests book by id.</param>
+    public BorrowInfoDto(BorrowInfo? borrowInfo, AbonentId abonentId)
     {
-        ArgumentNullException.ThrowIfNull(borrowInfo);
+        if (borrowInfo is not null)
+        {
+            Status = borrowInfo.AbonentId == abonentId ? "Borrowed by you" : "Borrowed";
+        }
+        else
+        {
+            Status = "Available";
+        }
 
-        AbonentId = borrowInfo.AbonentId.Value;
-        BorrowedAt = borrowInfo.BorrowedAt;
-        ReturnBefore = borrowInfo.ReturnBefore;
+        BorrowedAt = borrowInfo?.BorrowedAt;
+        ReturnBefore = borrowInfo?.ReturnBefore;
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sstv.DomainExceptions.Extensions.ProblemDetails;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BookLibrary.Api.Features.Abonents;
 
@@ -91,6 +92,7 @@ internal sealed class RegisterAbonentModelValidator : AbstractValidator<Register
 /// Example of request to register abonent.
 /// </summary>
 [UsedImplicitly]
+[ExcludeFromCodeCoverage]
 internal sealed class RegisterAbonentModelExample : IExamplesProvider<RegisterAbonentModel>
 {
     public RegisterAbonentModel GetExamples()

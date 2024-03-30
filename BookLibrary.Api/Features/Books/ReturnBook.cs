@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sstv.DomainExceptions.Extensions.ProblemDetails;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
+using System.Diagnostics.CodeAnalysis;
 using UUIDNext;
 
 namespace BookLibrary.Api.Features;
@@ -74,6 +75,7 @@ internal sealed class ReturnBookModelValidator : AbstractValidator<ReturnBookMod
 /// Example of request for return book.
 /// </summary>
 [UsedImplicitly]
+[ExcludeFromCodeCoverage]
 internal sealed class ReturnBookModelExample : IExamplesProvider<ReturnBookModel>
 {
     public ReturnBookModel GetExamples()

@@ -1,9 +1,11 @@
-﻿using BookLibrary.Application.Features.Books.GetBook;
+﻿using BookLibrary.Api.Extensions;
+using BookLibrary.Application.Features.Books.GetBook;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Sstv.DomainExceptions.Extensions.ProblemDetails;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Filters;
+using System.Diagnostics.CodeAnalysis;
 using UUIDNext;
 
 namespace BookLibrary.Api.Features;
@@ -24,7 +26,7 @@ public sealed class GetBookController : ControllerBase
     /// <param name="useCase">UseCase - get book by id.</param>
     /// <param name="ct">Token for cancel operation.</param>
     [HttpGet]
-    [SwaggerResponse(StatusCodes.Status200OK)]
+    [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(BookDto))]
     [SwaggerResponseExample(StatusCodes.Status200OK, typeof(BookDtoExample))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "In case bad request parameters", typeof(ErrorCodeProblemDetails))]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "In case server error", typeof(ErrorCodeProblemDetails))]
@@ -36,7 +38,9 @@ public sealed class GetBookController : ControllerBase
     {
         ArgumentNullException.ThrowIfNull(useCase);
 
-        var bookDto = await useCase.ExecuteAsync(bookId, ct);
+        var bookDto = await useCase.ExecuteAsync(
+            new GetBookByIdQuery(bookId, HttpContext.GetUserId()
+        ), ct);
 
         return Ok(bookDto);
     }
@@ -46,6 +50,7 @@ public sealed class GetBookController : ControllerBase
 /// Example of request for adding new books.
 /// </summary>
 [UsedImplicitly]
+[ExcludeFromCodeCoverage]
 internal sealed class BookDtoExample : IExamplesProvider<BookDto>
 {
     public BookDto GetExamples()
@@ -59,7 +64,7 @@ internal sealed class BookDtoExample : IExamplesProvider<BookDto>
             Authors = [new AuthorDto { Name = "Vaughn", Surname = "Vernon" }],
             BorrowInfo = new BorrowInfoDto
             {
-                AbonentId = Uuid.NewSequential(),
+                Status = "Borrowed",
                 BorrowedAt = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromMinutes(5)),
                 ReturnBefore = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
             }
