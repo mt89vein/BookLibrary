@@ -8,7 +8,7 @@ Proof of concept of library system for education purpose
 There are books, that have one or more authors, title and a cover.
 Books uniquely identified by ISBN and publication date.
 
-Library has limited count of books. Еhere must be accounting of books.
+Library has limited count of books. There must be accounting of books.
 
 Every book has a history of borrowing (who and when borrowed and when returned)
 Every abonent also has a same history (which books were borrowed and when returned)

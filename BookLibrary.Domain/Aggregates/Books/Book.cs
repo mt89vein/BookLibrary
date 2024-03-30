@@ -43,6 +43,11 @@ public sealed class Book : Entity
     public BorrowInfo? BorrowInfo { get; private set; }
 
     /// <summary>
+    /// When book added to library.
+    /// </summary>
+    public DateTimeOffset CreatedAt { get; private set; }
+
+    /// <summary>
     /// Creates new instance of <see cref="Book"/>.
     /// </summary>
     /// <param name="bookId">Book identifier.</param>
@@ -50,6 +55,7 @@ public sealed class Book : Entity
     /// <param name="isbn">ISBN.</param>
     /// <param name="publicationDate">Book publication date.</param>
     /// <param name="authors">Book authors.</param>
+    /// <param name="createdAt">When book added to library.</param>
     /// <exception cref="BookLibraryException">
     /// When <paramref name="bookId"/> was invalid.
     /// </exception>
@@ -61,7 +67,8 @@ public sealed class Book : Entity
         BookTitle bookTitle,
         Isbn isbn,
         BookPublicationDate publicationDate,
-        IReadOnlyCollection<Author> authors
+        IReadOnlyCollection<Author> authors,
+        DateTimeOffset createdAt
     )
     {
         ArgumentNullException.ThrowIfNull(bookTitle);
@@ -78,6 +85,8 @@ public sealed class Book : Entity
         Authors = authors.Count > 0
             ? new List<Author>(authors)
             : throw ErrorCodes.BookMustHaveAnAuthors.ToException();
+
+        CreatedAt = createdAt;
 
         AddDomainEvent(new BookCreatedEvent(Id));
     }

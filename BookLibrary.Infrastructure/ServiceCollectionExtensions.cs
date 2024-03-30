@@ -1,5 +1,6 @@
 ﻿using BookLibrary.Application.Infrastructure;
 using BookLibrary.Infrastructure.ValueConverters;
+using EntityFramework.Exceptions.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -23,6 +24,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddSingleton<IUuidGenerator, UuidGenerator>();
+        services.AddSingleton(TimeProvider.System);
 
         return services;
     }
@@ -74,7 +76,8 @@ public static class ServiceCollectionExtensions
                         builder.MigrationsAssembly(typeof(ApplicationContext).Assembly.GetName().Name);
                         builder.MigrationsHistoryTable("__EFMigrationHistory", ApplicationContext.DefaultScheme);
                     })
-                    .UseSnakeCaseNamingConvention();
+                    .UseSnakeCaseNamingConvention()
+                    .UseExceptionProcessor();
             });
     }
 }

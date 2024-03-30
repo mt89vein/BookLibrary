@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using BookLibrary.Application.Features.Abonents.RegisterAbonent;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BookLibrary.Application.Features.Abonents;
@@ -16,6 +17,6 @@ internal static class ServiceCollectionExtensions
     /// <returns>Service registrator.</returns>
     public static IServiceCollection AddAbonentsFeatures(this IServiceCollection services)
     {
-        return services;
+        return services.AddScoped<RegisterAbonentUseCase>();
     }
 }

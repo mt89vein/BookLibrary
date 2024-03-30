@@ -4,6 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace BookLibrary.Domain.ValueObjects;
 
+/// <summary>
+/// International standard book number <see href="https://en.wikipedia.org/wiki/ISBN"/>.
+/// </summary>
 public sealed partial class Isbn : ValueObject
 {
     private static readonly Regex _regex = GetIsbnRegex();

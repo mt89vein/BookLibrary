@@ -73,4 +73,10 @@ public enum ErrorCodes
 
     [ErrorDescription(Description = "Book getting failed")]
     BookGettingFailed = 20,
+
+    [ErrorDescription(Description = "Abonent registering failed")]
+    AbonentRegisteringFailed = 21,
+
+    [ErrorDescription(Description = "Email already exists")]
+    EmailAlreadyExists = 22,
 }

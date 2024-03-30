@@ -59,6 +59,7 @@ internal sealed class SwaggerConfigureOptions : IConfigureOptions<SwaggerGenOpti
             }
         });
 
+        // adds an ability to use same routes with different http methods
         options.ResolveConflictingActions(apiDescriptions =>
         {
             var descriptions = apiDescriptions as ApiDescription[] ?? apiDescriptions.ToArray();

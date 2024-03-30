@@ -8,7 +8,7 @@ namespace BookLibrary.Domain.Aggregates.Books;
 /// <summary>
 /// Book author.
 /// </summary>
-public class Author : ValueObject
+public sealed class Author : ValueObject
 {
     /// <summary>
     /// First name.

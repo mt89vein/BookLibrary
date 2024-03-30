@@ -1,3 +1,4 @@
+using BookLibrary.Domain.Aggregates.Abonents.Events;
 using BookLibrary.Domain.Exceptions;
 using BookLibrary.Domain.ValueObjects;
 using Seedwork;
@@ -26,7 +27,10 @@ public sealed class Abonent : Entity
     /// </summary>
     public Email Email { get; private set; }
 
-    // TODO: address, phone number
+    /// <summary>
+    /// Abonent creation date time.
+    /// </summary>
+    public DateTimeOffset CreatedAt { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Abonent"></see> class.
@@ -34,7 +38,13 @@ public sealed class Abonent : Entity
     /// <param name="id">Abonent identifier.</param>
     /// <param name="name">Abonent name.</param>
     /// <param name="email">Email.</param>
-    public Abonent(AbonentId id, AbonentName name, Email email)
+    /// <param name="createdAt">When abonent created.</param>
+    public Abonent(
+        AbonentId id,
+        AbonentName name,
+        Email email,
+        DateTimeOffset createdAt
+    )
     {
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(email);
@@ -42,6 +52,9 @@ public sealed class Abonent : Entity
         Id = id != default ? id : throw ErrorCodes.InvalidAbonentId.ToException();
         Name = name;
         Email = email;
+        CreatedAt = createdAt;
+
+        AddDomainEvent(new AbonentRegistredEvent(Id));
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.

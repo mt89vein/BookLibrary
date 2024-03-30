@@ -43,7 +43,7 @@ public sealed class AddNewBooksController : ControllerBase
             model.PublicationDate,
             model.Authors.Select(x => new BookAuthor(x.Name, x.Surname, x.Patronymic)).ToArray(),
             model.Count,
-            UserId: Guid.NewGuid() // imaging that we have authentication
+            UserId: Guid.NewGuid() // imagine that we have authentication
         );
 
         await useCase.ExecuteAsync(command, ct);
@@ -60,7 +60,7 @@ public sealed class AddNewBooksController : ControllerBase
 /// <param name="PublicationDate">Book publication date.</param>
 /// <param name="Authors">Book authors.</param>
 /// <param name="Count">Count of books to create.</param>
-public record AddNewBooksModel(
+public sealed record AddNewBooksModel(
     string Isbn,
     string Title,
     DateOnly PublicationDate,
@@ -74,7 +74,7 @@ public record AddNewBooksModel(
 /// <param name="Name">First name.</param>
 /// <param name="Surname">Last name.</param>
 /// <param name="Patronymic">Middle name.</param>
-public record AddNewBookAuthorModel(string Name, string Surname, string? Patronymic = null);
+public sealed record AddNewBookAuthorModel(string Name, string Surname, string? Patronymic = null);
 
 /// <summary>
 /// Validator for <see cref="AddNewBooksModel"/>.
