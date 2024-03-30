@@ -94,4 +94,13 @@ public enum ErrorCodes
 
     [ErrorDescription(Description = "Too many books borrowed already")]
     TooManyBooksBorrowedAlready = 27,
+
+    [ErrorDescription(Description = "Invalid abonent identifier")]
+    InvalidBookReturnAbonentId = 28,
+
+    [ErrorDescription(Description = "Book can't be returned if you not borrowed it")]
+    BookNotBorrowedByAbonent = 29,
+
+    [ErrorDescription(Description = "Book returning failed")]
+    BookReturningFailed = 30,
 }

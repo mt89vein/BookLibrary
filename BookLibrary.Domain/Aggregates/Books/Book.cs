@@ -134,24 +134,37 @@ public sealed class Book : Entity
         BorrowInfo = new BorrowInfo(abonement.AbonentId, borrowedAt, returnBeforeDate);
 
         // hint: there we can check amortization percent of book before borrow
-        AddDomainEvent(new BookBorrowedEvent(Id, abonement.AbonentId, BorrowedAt: borrowedAt, returnBeforeDate));
+        AddDomainEvent(new BookBorrowedEvent(Id, BorrowInfo.AbonentId, BorrowInfo.BorrowedAt, BorrowInfo.ReturnBefore));
     }
 
     /// <summary>
     /// Return the book.
     /// </summary>
+    /// <param name="abonentId">Abonent identifier.</param>
     /// <param name="returnedAt">DateTime when book was returned.</param>
-    public void Return(DateTimeOffset returnedAt)
+    public void Return(AbonentId abonentId, DateTimeOffset returnedAt)
     {
+        if (abonentId == default)
+        {
+            throw ErrorCodes.InvalidBookReturnAbonentId.ToException();
+        }
+
         if (BorrowInfo is null)
         {
             throw ErrorCodes.BookNotBorrowedByAnyone.ToException();
         }
 
+        if (BorrowInfo.AbonentId != abonentId)
+        {
+            throw ErrorCodes.BookNotBorrowedByAbonent.ToException();
+        }
+
         // TODO: we need history of borrowed books (like activity)
 
+        BorrowInfo = null;
+
         // hint: there we can check amortization percent of book after return
-        AddDomainEvent(new BookReturnedEvent(Id, BorrowInfo.AbonentId, returnedAt));
+        AddDomainEvent(new BookReturnedEvent(Id, abonentId, returnedAt));
     }
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.

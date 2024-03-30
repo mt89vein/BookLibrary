@@ -54,14 +54,13 @@ public sealed class BorrowBookUseCase
     {
         ArgumentNullException.ThrowIfNull(command);
 
-        var loggingScope = new Dictionary<string, object?>
+        using var _ = _logger.BeginScope(new Dictionary<string, object?>
         {
             ["AbonentId"] = command.AbonentId.ToString(),
             ["ISBN"] = command.Isbn,
             ["PublicationDate"] = command.PublicationDate?.ToString() ?? "N/A",
             ["ReturnDate"] = command.ReturnDate?.ToString() ?? "N/A"
-        };
-        using var _ = _logger.BeginScope(loggingScope);
+        });
 
         try
         {
