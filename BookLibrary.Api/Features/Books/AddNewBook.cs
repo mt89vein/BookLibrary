@@ -1,4 +1,5 @@
-﻿using BookLibrary.Application.Features.Books.AddNewBook;
+﻿using BookLibrary.Api.Extensions;
+using BookLibrary.Application.Features.Books.AddNewBook;
 using FluentValidation;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +44,7 @@ public sealed class AddNewBooksController : ControllerBase
             model.PublicationDate,
             model.Authors.Select(x => new BookAuthor(x.Name, x.Surname, x.Patronymic)).ToArray(),
             model.Count,
-            UserId: Guid.NewGuid() // imagine that we have authentication
+            UserId: HttpContext.GetUserId()
         );
 
         await useCase.ExecuteAsync(command, ct);

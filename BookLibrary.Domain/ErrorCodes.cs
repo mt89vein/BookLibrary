@@ -79,4 +79,7 @@ public enum ErrorCodes
 
     [ErrorDescription(Description = "Email already exists")]
     EmailAlreadyExists = 22,
+
+    [ErrorDescription(Description = "User undefined")]
+    UserUndefined = 23,
 }

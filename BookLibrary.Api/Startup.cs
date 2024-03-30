@@ -1,3 +1,4 @@
+using BookLibrary.Api.Auth;
 using BookLibrary.Api.Extensions;
 using BookLibrary.Api.ProblemDetails;
 using BookLibrary.Api.Swagger;
@@ -16,6 +17,7 @@ public class Startup
         services.AddSwagger();
         services.AddInfrastructure();
         services.AddApiControllers();
+        services.AddMockAuthentication();
 
         services.AddBookLibraryException();
         services.AddApplication();
@@ -31,14 +33,16 @@ public class Startup
             app.UseDeveloperExceptionPage();
         }
 
+        app.UseErrorCodesDebugView();
         app.UseExceptionHandler();
         app.UseRouting();
 
-        app.UseErrorCodesDebugView();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers();
+            endpoints.MapControllers().RequireAuthorization();
             endpoints.MapSwaggerUI(app);
         });
     }
