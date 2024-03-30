@@ -82,4 +82,16 @@ public enum ErrorCodes
 
     [ErrorDescription(Description = "User undefined")]
     UserUndefined = 23,
+
+    [ErrorDescription(Description = "There no book that can be borrowed")]
+    ThereNoBookThatCanBeBorrowed = 24,
+
+    [ErrorDescription(Description = "Invalid borrowed books count")]
+    InvalidBorrowerBooksCount = 25,
+
+    [ErrorDescription(Description = "Book borrowing failed")]
+    BookBorrowingFailed = 26,
+
+    [ErrorDescription(Description = "Too many books borrowed already")]
+    TooManyBooksBorrowedAlready = 27,
 }

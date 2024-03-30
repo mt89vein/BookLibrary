@@ -502,5 +502,5 @@ dotnet_diagnostic.CA2225.severity = none # operator overloads have name alternat
 dotnet_diagnostic.CA1591.severity = error # Missing XML comment for publicly visible type or member
 dotnet_diagnostic.SYSLIB1045.severity = none # use regex generators
 dotnet_diagnostic.IDE0200.severity = none # use method groups
-dotnet_diagnostic.CA1848.severity = silent # use logger message for performance
+dotnet_diagnostic.CA1848.severity = none # use logger message for performance
 

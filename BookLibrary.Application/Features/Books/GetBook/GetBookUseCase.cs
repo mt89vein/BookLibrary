@@ -171,9 +171,9 @@ public sealed class BorrowInfoDto
     public DateTimeOffset BorrowedAt { get; set; }
 
     /// <summary>
-    /// DateTime when book must be returned.
+    /// Date when book must be returned.
     /// </summary>
-    public DateTimeOffset ReturnBefore { get; set; }
+    public DateOnly ReturnBefore { get; set; }
 
     /// <summary>
     /// Creates empty instance.

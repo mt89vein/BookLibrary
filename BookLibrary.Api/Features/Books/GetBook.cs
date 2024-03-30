@@ -61,7 +61,7 @@ internal sealed class BookDtoExample : IExamplesProvider<BookDto>
             {
                 AbonentId = Uuid.NewSequential(),
                 BorrowedAt = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromMinutes(5)),
-                ReturnBefore = DateTimeOffset.UtcNow.AddDays(30),
+                ReturnBefore = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)),
             }
         };
     }

@@ -1,4 +1,5 @@
 ﻿using BookLibrary.Application.Features.Books.AddNewBook;
+using BookLibrary.Application.Features.Books.BorrowBook;
 using BookLibrary.Application.Features.Books.GetBook;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
@@ -20,6 +21,7 @@ internal static class ServiceCollectionExtensions
     {
         services.AddScoped<AddNewBookUseCase>();
         services.AddScoped<GetBookUseCase>();
+        services.AddScoped<BorrowBookUseCase>();
 
         return services;
     }

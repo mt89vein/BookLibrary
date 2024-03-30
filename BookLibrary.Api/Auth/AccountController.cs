@@ -57,6 +57,17 @@ public sealed class AccountController : ControllerBase
 
         return Ok();
     }
+
+    /// <summary>
+    /// Logs user out.
+    /// </summary>
+    [HttpPost("logout")]
+    public async Task<IActionResult> LogoutAsync()
+    {
+        await HttpContext.SignOutAsync(MockAuthenticationConstants.SCHEME_NAME);
+
+        return Ok();
+    }
 }
 
 /// <summary>
@@ -69,7 +80,7 @@ public static class ServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddMockAuthentication(this IServiceCollection services)
     {
-        return services.AddAuthentication(MockAuthenticationConstants.SCHEME_NAME)
+        return services.AddAuthentication()
             .AddScheme<MockEmailAuthenticationOptions, MockEmailAuthenticationHandler>(
                 MockAuthenticationConstants.SCHEME_NAME,
                 MockAuthenticationConstants.SCHEME_NAME,

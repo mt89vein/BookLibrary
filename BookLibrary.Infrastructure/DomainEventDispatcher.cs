@@ -62,7 +62,7 @@ internal sealed class DomainEventDispatcher<TDbContext> : IDomainEventDispatcher
 
             foreach (var entity in entities)
             {
-                var domainEvents = entity.DomainEvents;
+                var domainEvents = entity.DomainEvents.ToArray();
                 entity.ClearDomainEvents();
 
                 foreach (var domainEvent in domainEvents)

@@ -15,7 +15,7 @@ namespace BookLibrary.Api.Features.Abonents;
 [ApiExplorerSettings(GroupName = "v1")]
 [Route("api/v1/abonents")]
 [Tags("Abonents")]
-public sealed class RegisterAbonent : ControllerBase
+public sealed class RegisterAbonentController : ControllerBase
 {
     /// <summary>
     /// Registeres abonent.

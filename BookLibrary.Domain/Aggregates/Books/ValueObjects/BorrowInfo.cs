@@ -21,9 +21,9 @@ public sealed class BorrowInfo : ValueObject
     public DateTimeOffset BorrowedAt { get; private set; }
 
     /// <summary>
-    /// DateTime when book must be returned.
+    /// Date when book must be returned.
     /// </summary>
-    public DateTimeOffset ReturnBefore { get; private set; }
+    public DateOnly ReturnBefore { get; private set; }
 
     /// <summary>
     /// Borrowed books by abonent.
@@ -34,7 +34,7 @@ public sealed class BorrowInfo : ValueObject
     internal BorrowInfo(
         AbonentId abonentId,
         DateTimeOffset borrowedAt,
-        DateTimeOffset returnBefore
+        DateOnly returnBefore
     )
     {
         AbonentId = abonentId;

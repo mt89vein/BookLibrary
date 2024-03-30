@@ -94,34 +94,47 @@ public sealed class Book : Entity
     /// <summary>
     /// Borrow book by abonent.
     /// </summary>
-    /// <param name="abonentId">Book.</param>
+    /// <param name="abonement">Borrower.</param>
     /// <param name="borrowedAt">DateTime when book was borrowed.</param>
     /// <param name="returnBefore">DateTime when book must be returned.</param>
     /// <exception cref="ArgumentNullException">When book not provided.</exception>
     /// <exception cref="ArgumentException">
     /// When <paramref name="borrowedAt"/> is later than <paramref name="returnBefore"/>.
     /// </exception>
-    public void Borrow(AbonentId abonentId, DateTimeOffset borrowedAt, DateTimeOffset returnBefore)
+    /// <exception cref="BookLibraryException">
+    /// When a lot of books have already been taken by abonent.
+    /// </exception>
+    public void Borrow(Abonement abonement, DateTimeOffset borrowedAt, DateOnly? returnBefore)
     {
-        if (abonentId == default)
-        {
-            throw ErrorCodes.InvalidBorrowerAbonentId.ToException();
-        }
+        ArgumentNullException.ThrowIfNull(abonement);
 
-        if (borrowedAt >= returnBefore)
+        // by default not more than 30 days
+        var returnBeforeDate = returnBefore ?? DateOnly.FromDateTime(borrowedAt.AddDays(30).Date);
+
+        if (DateOnly.FromDateTime(borrowedAt.Date) >= returnBeforeDate)
         {
             throw new ArgumentException("Book return date must be later than borrowing time");
         }
 
-        if (BorrowInfo is not null && BorrowInfo.AbonentId != abonentId)
+        if (BorrowInfo is not null)
         {
-            throw ErrorCodes.BookAlreadyBorrowed.ToException();
+            if (BorrowInfo.AbonentId != abonement.AbonentId)
+            {
+                throw ErrorCodes.BookAlreadyBorrowed.ToException();
+            }
+
+            return;
         }
 
-        BorrowInfo = new BorrowInfo(abonentId, borrowedAt, returnBefore);
+        if (abonement.BorrowedBooksCount >= 3)
+        {
+            throw ErrorCodes.TooManyBooksBorrowedAlready.ToException();
+        }
+
+        BorrowInfo = new BorrowInfo(abonement.AbonentId, borrowedAt, returnBeforeDate);
 
         // hint: there we can check amortization percent of book before borrow
-        AddDomainEvent(new BookBorrowedEvent(Id, abonentId, BorrowedAt: borrowedAt, returnBefore));
+        AddDomainEvent(new BookBorrowedEvent(Id, abonement.AbonentId, BorrowedAt: borrowedAt, returnBeforeDate));
     }
 
     /// <summary>
