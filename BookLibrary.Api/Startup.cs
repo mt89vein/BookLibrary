@@ -4,6 +4,7 @@ using BookLibrary.Api.ProblemDetails;
 using BookLibrary.Api.Swagger;
 using BookLibrary.Application;
 using BookLibrary.Infrastructure;
+using BookLibrary.Infrastructure.OpenTelemetry;
 using Sstv.DomainExceptions.Extensions.DependencyInjection;
 
 namespace BookLibrary.Api;
@@ -23,6 +24,7 @@ public class Startup
         services.AddApplication();
         services.AddMediator(o => o.ServiceLifetime = ServiceLifetime.Scoped);
         services.AddEntityFramework();
+        services.AddMetricCollector();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +41,8 @@ public class Startup
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+        app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
         app.UseEndpoints(endpoints =>
         {

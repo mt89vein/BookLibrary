@@ -3,7 +3,6 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" />
     <PackageReference Include="Mediator.SourceGenerator" />
-    <PackageReference Include="Sstv.DomainExceptions.Extensions.DependencyInjection" />
     <PackageReference Include="Sstv.DomainExceptions.Extensions.ProblemDetails" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" />
