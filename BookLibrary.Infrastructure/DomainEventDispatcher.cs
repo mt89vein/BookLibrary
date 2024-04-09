@@ -1,4 +1,5 @@
-﻿using Mediator;
+﻿using BookLibrary.Application.Features.DomainEventHandlers;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Seedwork;
 
@@ -17,6 +18,11 @@ internal sealed class DomainEventDispatcher<TDbContext> : IDomainEventDispatcher
     private readonly IMediator _mediator;
 
     /// <summary>
+    /// Reduces domain events.
+    /// </summary>
+    private readonly IDomainEventsReducer _domainEventsReducer;
+
+    /// <summary>
     /// DbContext.
     /// </summary>
     private TDbContext? _dbContext;
@@ -25,9 +31,11 @@ internal sealed class DomainEventDispatcher<TDbContext> : IDomainEventDispatcher
     /// Creates new instance of <see cref="DomainEventDispatcher{T}"/>.
     /// </summary>
     /// <param name="mediator">Mediator.</param>
-    public DomainEventDispatcher(IMediator mediator)
+    /// <param name="domainEventsReducer">Reduces domain events..</param>
+    public DomainEventDispatcher(IMediator mediator, IDomainEventsReducer domainEventsReducer)
     {
         _mediator = mediator;
+        _domainEventsReducer = domainEventsReducer;
     }
 
     /// <summary>
@@ -57,18 +65,20 @@ internal sealed class DomainEventDispatcher<TDbContext> : IDomainEventDispatcher
             var entities = _dbContext.ChangeTracker
                 .Entries<IEntity>()
                 .Where(a => a.Entity.DomainEvents.Count > 0)
-                .Select(a => a.Entity)
-                .ToArray();
+                .Select(a => a.Entity);
 
+            var domainEvents = new List<IDomainEvent>();
             foreach (var entity in entities)
             {
-                var domainEvents = entity.DomainEvents.ToArray();
+                domainEvents.AddRange(entity.DomainEvents);
                 entity.ClearDomainEvents();
+            }
 
-                foreach (var domainEvent in domainEvents)
-                {
-                    await _mediator.Publish(domainEvent, ct).ConfigureAwait(false);
-                }
+            var reducedDomainEvents = _domainEventsReducer.Reduce(domainEvents);
+
+            foreach (var domainEvent in reducedDomainEvents)
+            {
+                await _mediator.Publish(domainEvent, ct).ConfigureAwait(false);
             }
         }
     }

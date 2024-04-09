@@ -1,4 +1,5 @@
-﻿using BookLibrary.Domain.Aggregates.Books;
+﻿using BookLibrary.Application.Infrastructure;
+using BookLibrary.Domain.Aggregates.Books;
 using Mediator;
 using Microsoft.Extensions.Logging;
 
@@ -9,11 +10,16 @@ namespace BookLibrary.Application.Features.DomainEventHandlers;
 /// </summary>
 public sealed class BorrowedBookEventHandler : INotificationHandler<BookBorrowedEvent>
 {
+    private readonly IMetricCollector _metricCollector;
     private readonly ILogger<BorrowedBookEventHandler> _logger;
 
-    public BorrowedBookEventHandler(ILogger<BorrowedBookEventHandler> logger)
+    public BorrowedBookEventHandler(
+        IMetricCollector metricCollector,
+        ILogger<BorrowedBookEventHandler> logger
+    )
     {
         _logger = logger;
+        _metricCollector = metricCollector;
     }
 
     public ValueTask Handle(BookBorrowedEvent notification, CancellationToken cancellationToken)
@@ -25,6 +31,8 @@ public sealed class BorrowedBookEventHandler : INotificationHandler<BookBorrowed
             notification.AbonentId.Value,
             notification.ReturnBefore
         );
+
+        _metricCollector.BookBorrowed();
 
         return ValueTask.CompletedTask;
     }

@@ -1,4 +1,5 @@
-﻿using BookLibrary.Domain.Aggregates.Abonents;
+﻿using BookLibrary.Application.Infrastructure;
+using BookLibrary.Domain.Aggregates.Abonents;
 using Mediator;
 using Microsoft.Extensions.Logging;
 
@@ -9,10 +10,14 @@ namespace BookLibrary.Application.Features.DomainEventHandlers;
 /// </summary>
 public sealed class BookReturnedEventHandler : INotificationHandler<BookReturnedEvent>
 {
+    private readonly IMetricCollector _metricCollector;
     private readonly ILogger<BookReturnedEventHandler> _logger;
 
-    public BookReturnedEventHandler(ILogger<BookReturnedEventHandler> logger)
+    public BookReturnedEventHandler(
+        IMetricCollector metricCollector,
+        ILogger<BookReturnedEventHandler> logger)
     {
+        _metricCollector = metricCollector;
         _logger = logger;
     }
 
@@ -24,6 +29,8 @@ public sealed class BookReturnedEventHandler : INotificationHandler<BookReturned
             notification.BookId.Value,
             notification.AbonentId.Value
         );
+
+        _metricCollector.BookReturned();
 
         return ValueTask.CompletedTask;
     }

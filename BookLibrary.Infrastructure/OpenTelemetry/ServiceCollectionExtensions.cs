@@ -88,10 +88,7 @@ internal sealed class MetricCollector : IMetricCollector, IDisposable
     /// <param name="meterFactory">Factory of meters.</param>
     public MetricCollector(IMeterFactory meterFactory)
     {
-        _meter = meterFactory.Create(MeterName, "1.0.0", new[]
-        {
-            new KeyValuePair<string, object?>("key", "value")
-        });
+        _meter = meterFactory.Create(MeterName, "1.0.0");
 
         _bookCreatedCount = _meter.CreateCounter<long>(name: "bl.books.created", description: "Counts created books.");
         _bookBorrowedCount = _meter.CreateCounter<long>(name: "bl.books.borrowed", description: "Counts books that was borrowed.");

@@ -88,7 +88,7 @@ public sealed class Book : Entity
 
         CreatedAt = createdAt;
 
-        AddDomainEvent(new BookCreatedEvent(Id));
+        AddDomainEvent(new BookCreatedEvent(Title, Isbn, PublicationDate, Count: 1));
     }
 
     /// <summary>

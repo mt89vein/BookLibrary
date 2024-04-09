@@ -82,11 +82,6 @@ public sealed class AddNewBookUseCase
                 createdAt: _timeProvider.GetUtcNow()
             )).ToArray();
 
-            foreach (var book in books.Skip(1))
-            {
-                book.ClearDomainEvents();
-            }
-
             _ctx.Books.AddRange(books);
 
             await _ctx.SaveChangesAsync(ct);

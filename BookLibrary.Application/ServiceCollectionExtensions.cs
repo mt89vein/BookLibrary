@@ -1,5 +1,6 @@
 ﻿using BookLibrary.Application.Features.Abonents;
 using BookLibrary.Application.Features.Books;
+using BookLibrary.Application.Features.DomainEventHandlers;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 
@@ -19,6 +20,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         return services
+            .AddSingleton<IDomainEventsReducer, DomainEventsReducer>()
             .AddAbonentsFeatures()
             .AddBooksFeatures();
     }
