@@ -22,6 +22,7 @@ public static class ErrorCodeMapping
         [ErrorCodes.EmailAlreadyExists] = StatusCodes.Status200OK,
         [ErrorCodes.ThereNoBookThatCanBeBorrowed] = StatusCodes.Status200OK,
         [ErrorCodes.TooManyBooksBorrowedAlready] = StatusCodes.Status200OK,
+        [ErrorCodes.BookNotFoundOrNotBorrowedByAbonent] = StatusCodes.Status200OK,
 
         // 4xx
         [ErrorCodes.InvalidData] = StatusCodes.Status400BadRequest,

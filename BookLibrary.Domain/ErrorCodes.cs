@@ -106,4 +106,7 @@ public enum ErrorCodes
 
     [ErrorDescription(Description = "Borrowed books getting failed")]
     BorrowedBooksGettingFailed = 31,
+
+    [ErrorDescription(Description = "This book not found or not borrowed by abonent")]
+    BookNotFoundOrNotBorrowedByAbonent = 32,
 }

@@ -3,7 +3,9 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" />
     <PackageReference Include="Mediator.SourceGenerator" />
+    <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Sstv.DomainExceptions.Extensions.ProblemDetails" />
+    <PackageReference Include="Sstv.DomainExceptions.Extensions.SerilogEnricher" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" />
