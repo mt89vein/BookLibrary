@@ -1,5 +1,6 @@
 using BookLibrary.Api.Auth;
 using BookLibrary.Api.Extensions;
+using BookLibrary.Api.HealthChecks;
 using BookLibrary.Api.ProblemDetails;
 using BookLibrary.Api.Swagger;
 using BookLibrary.Application;
@@ -25,6 +26,7 @@ public class Startup
         services.AddMediator(o => o.ServiceLifetime = ServiceLifetime.Scoped);
         services.AddEntityFramework();
         services.AddMetricCollector();
+        services.AddHealthChecking();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +50,7 @@ public class Startup
         {
             endpoints.MapControllers().RequireAuthorization();
             endpoints.MapSwaggerUI(app);
+            endpoints.MapHealthCheckingEndpoints();
         });
     }
 }

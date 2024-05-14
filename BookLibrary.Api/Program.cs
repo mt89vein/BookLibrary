@@ -1,3 +1,4 @@
+using BookLibrary.Api.HealthChecks;
 using BookLibrary.Infrastructure.Extensions;
 using Serilog;
 using Serilog.Events;
@@ -39,6 +40,10 @@ public class Program
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
+            .ConfigureServices(ctx =>
+            {
+                ctx.AddSingleton<IStartupFilter, GracefulShutdownStartupFilter>();
+            })
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder
