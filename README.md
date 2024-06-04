@@ -26,6 +26,21 @@ What else we can do:
 - Every book has price and amortization percent that we can track. Also, we can charge a fine, if book has been spoiled
 - Book recomendation system
 
+## Development
+
+### install husky
+
+```bash
+dotnet tool restore
+dotnet husky install
+```
+
+### run database locally
+
+```bash
+docker-compose -f docker-compose.debug.yml up -d
+```
+
 # Same in russian:
 
 ### Предметная область

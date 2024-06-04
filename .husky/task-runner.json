@@ -1,0 +1,31 @@
+{
+   "tasks": [
+      {
+         "name": "commit-message-linter",
+         "group": "commit-msg",
+         "command": "dotnet",
+         "args": ["husky", "exec", ".husky/csx/commit-lint.csx", "--args", "${args}"]
+      },
+      {
+         "name": "dotnet-format",
+         "group": "pre-commit",
+         "command": "dotnet",
+         "args": ["format", "--include", "${staged}"],
+         "include": ["**/*.cs"]
+      },
+      {
+         "name": "dotnet-build",
+         "group": "pre-commit",
+         "command": "dotnet",
+         "args": ["build", "--no-restore"],
+         "include": ["**/*.cs"]
+      },
+      {
+         "name": "dotnet-test",
+         "group": "pre-commit",
+         "command": "dotnet",
+         "args": ["test", "--no-restore", "--no-build", "--filter", "\"TestCategory=UnitTests\""],
+         "include": ["**/*.cs"]
+      }
+   ]
+}
