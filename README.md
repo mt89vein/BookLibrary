@@ -1,5 +1,5 @@
 # BookLibrary
-Proof of concept of library system for education purpose
+Proof of concept of library system for education purpose that i use to explain in my [telegram channel about .NET](https://t.me/sh_dotnet)
 
 [Event storming Miro board](https://miro.com/app/board/uXjVKddnAyU=/)
 
@@ -42,6 +42,8 @@ docker-compose -f docker-compose.debug.yml up -d
 ```
 
 # Same in russian:
+
+Пет-проект с примером использования Clean Architecture + DDD + Vertical slices, о котором я пишу в своём [телеграм канале про .NET](https://t.me/sh_dotnet)
 
 ### Предметная область
 
