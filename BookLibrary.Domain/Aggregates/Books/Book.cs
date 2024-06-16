@@ -108,7 +108,7 @@ public sealed class Book : Entity
     {
         ArgumentNullException.ThrowIfNull(abonement);
 
-        // by default not more than 30 days
+        // by default 30 days
         var returnBeforeDate = returnBefore ?? DateOnly.FromDateTime(borrowedAt.AddDays(30).Date);
 
         if (DateOnly.FromDateTime(borrowedAt.Date) >= returnBeforeDate)
