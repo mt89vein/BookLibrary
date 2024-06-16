@@ -1,4 +1,5 @@
-﻿using BookLibrary.Application.Features.DomainEventHandlers;
+using BookLibrary.Application.Features.DomainEventHandlers;
+using JetBrains.Annotations;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Seedwork;
@@ -9,6 +10,7 @@ namespace BookLibrary.Infrastructure;
 /// Domain events dispatcher.
 /// </summary>
 /// <typeparam name="TDbContext">DbContext type.</typeparam>
+[UsedImplicitly]
 internal sealed class DomainEventDispatcher<TDbContext> : IDomainEventDispatcher<TDbContext>
     where TDbContext : DbContext
 {

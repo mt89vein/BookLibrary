@@ -1,13 +1,17 @@
 using BookLibrary.Api.HealthChecks;
 using BookLibrary.Infrastructure.Extensions;
+using JetBrains.Annotations;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 using Sstv.DomainExceptions.Extensions.SerilogEnricher;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace BookLibrary.Api;
 
+[SuppressMessage("Design", "CA1052:Class contains only static members")]
+[UsedImplicitly]
 public class Program
 {
     public static async Task Main(string[] args)

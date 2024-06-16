@@ -1,4 +1,4 @@
-﻿using BookLibrary.Domain.Exceptions;
+using BookLibrary.Domain.Exceptions;
 using System.Security.Claims;
 
 namespace BookLibrary.Api.Extensions;
@@ -18,6 +18,8 @@ public static class HttpContextExtensions
     /// </exception>
     public static Guid GetUserId(this HttpContext ctx)
     {
+        ArgumentNullException.ThrowIfNull(ctx);
+
         if (ctx.User.Identity?.IsAuthenticated == true &&
             Guid.TryParse(ctx.User.FindFirstValue("sub"), out var userId))
         {

@@ -1,4 +1,5 @@
-﻿using BookLibrary.Domain.Aggregates.Books;
+using BookLibrary.Domain.Aggregates.Books;
+using JetBrains.Annotations;
 using Seedwork;
 
 namespace BookLibrary.Application.Features.DomainEventHandlers;
@@ -19,6 +20,7 @@ public interface IDomainEventsReducer
 /// <summary>
 /// Reduces domain events.
 /// </summary>
+[UsedImplicitly]
 internal sealed class DomainEventsReducer : IDomainEventsReducer
 {
     /// <summary>
