@@ -18,4 +18,12 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnablePackageValidation>true</EnablePackageValidation>
     </PropertyGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="$(SolutionDir)\BannedSymbols.txt" />
+      <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
 </Project>

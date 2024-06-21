@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 		readme.md = readme.md
 		Directory.Packages.props = Directory.Packages.props
+		BannedSymbols.txt = BannedSymbols.txt
+		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookLibrary.Api", "BookLibrary.Api\BookLibrary.Api.csproj", "{BC8E5B82-A49F-4891-801D-08EF1C554239}"
