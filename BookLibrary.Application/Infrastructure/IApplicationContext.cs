@@ -1,4 +1,4 @@
-﻿using BookLibrary.Domain.Aggregates.Abonents;
+using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,4 +28,9 @@ public interface IDbSets : IDisposable
     /// Books.
     /// </summary>
     DbSet<Book> Books { get; }
+
+    /// <summary>
+    /// Books statistics.
+    /// </summary>
+    DbSet<BookStat> BookStats { get; }
 }

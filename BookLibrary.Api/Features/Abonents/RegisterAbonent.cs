@@ -1,6 +1,7 @@
-﻿using BookLibrary.Application.Features.Abonents.RegisterAbonent;
+using BookLibrary.Application.Features.Abonents.RegisterAbonent;
 using FluentValidation;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sstv.DomainExceptions.Extensions.ProblemDetails;
 using Swashbuckle.AspNetCore.Annotations;
@@ -25,6 +26,7 @@ public sealed class RegisterAbonentController : ControllerBase
     /// <param name="useCase">UseCase - add new books.</param>
     /// <param name="ct">Token for cancel operation.</param>
     [HttpPost]
+    [AllowAnonymous]
     [SwaggerResponse(StatusCodes.Status200OK)]
     [SwaggerRequestExample(typeof(RegisterAbonentModel), typeof(RegisterAbonentModelExample))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "In case bad request parameters", typeof(ErrorCodeProblemDetails))]

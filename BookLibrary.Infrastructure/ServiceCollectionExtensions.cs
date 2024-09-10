@@ -1,4 +1,5 @@
-﻿using BookLibrary.Application.Infrastructure;
+using BookLibrary.Application.Infrastructure;
+using BookLibrary.Infrastructure.Books;
 using BookLibrary.Infrastructure.ValueConverters;
 using EntityFramework.Exceptions.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Npgsql;
+using Sstv.Outbox;
+using Sstv.Outbox.EntityFrameworkCore.Npgsql;
 
 namespace BookLibrary.Infrastructure;
 
@@ -25,6 +28,13 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IUuidGenerator, UuidGenerator>();
         services.AddSingleton(TimeProvider.System);
+
+        services.AddOutboxItem<ApplicationContext, BookStatChange>(o =>
+            {
+                o.OutboxItemsLimit = 1000;
+                o.WorkerType = EfCoreWorkerTypes.BatchStrictOrdering;
+            })
+            .WithBatchHandler<BookStatChange, BookStatChangeApplier>();
 
         return services;
     }

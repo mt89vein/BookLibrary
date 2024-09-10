@@ -19,6 +19,7 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
     <PackageReference Include="Sstv.DomainExceptions.Extensions.DependencyInjection" />
+    <PackageReference Include="Sstv.Outbox.EntityFrameworkCore.Npgsql" />
     <PackageReference Include="UUIDNext" />
   </ItemGroup>
 

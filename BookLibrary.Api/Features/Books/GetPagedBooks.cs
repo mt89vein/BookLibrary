@@ -1,4 +1,4 @@
-﻿using BookLibrary.Application.Features.Books.GetPagedBooks;
+using BookLibrary.Application.Features.Books.GetPagedBooks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Sstv.DomainExceptions.Extensions.ProblemDetails;
@@ -101,14 +101,7 @@ internal sealed class BookPageDtoExample : IExamplesProvider<BookPageDto>
                     Title = "Domain-Driven Design distilled",
                     Isbn = "9780134434421",
                     PublicationDate = new DateOnly(2024, 01, 24),
-                    Authors = new[]
-                    {
-                        new BookPageItemAuthorDto
-                        {
-                            Name = "Vaughn",
-                            Surname = "Vernon"
-                        }
-                    },
+                    Authors = "Vaughn Vernon",
                     Available = true
                 }
             }

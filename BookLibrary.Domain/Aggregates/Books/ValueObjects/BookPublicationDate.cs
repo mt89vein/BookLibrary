@@ -1,4 +1,4 @@
-﻿using BookLibrary.Domain.Aggregates.Abonents;
+using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Exceptions;
 using Seedwork;
 
@@ -22,6 +22,13 @@ public sealed class BookPublicationDate : ValueObject
         }
 
         Value = value;
+    }
+
+    public static implicit operator DateOnly(BookPublicationDate publicationDate)
+    {
+        ArgumentNullException.ThrowIfNull(publicationDate);
+
+        return publicationDate.Value;
     }
 
     public override string ToString()

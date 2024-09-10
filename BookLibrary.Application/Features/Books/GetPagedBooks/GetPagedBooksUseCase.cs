@@ -1,4 +1,4 @@
-﻿using BookLibrary.Application.Dto;
+using BookLibrary.Application.Dto;
 using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Domain.Exceptions;
@@ -54,7 +54,7 @@ public sealed class GetPagedBooksUseCase
         {
             _logger.LogDebug("Getting book page");
 
-            var queryable = _ctx.Books.AsQueryable();
+            var queryable = _ctx.BookStats.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(query.Isbn))
             {
@@ -67,14 +67,13 @@ public sealed class GetPagedBooksUseCase
             }
 
             var pageDto = await queryable
-                .GroupBy(b => new { b.Isbn, b.PublicationDate })
                 .Select(b => new
                 {
-                    b.First().Title,
-                    b.Key.PublicationDate,
-                    b.Key.Isbn,
-                    b.First().Authors,
-                    Available = b.Any(y => y.BorrowInfo == null)
+                    b.Title,
+                    b.PublicationDate,
+                    b.Isbn,
+                    b.Authors,
+                    Available = b.AvailableCount > 0
                 })
                 .OrderByDescending(b => b.PublicationDate)
                 .ToPagedListAsync(query.Page, query.PageSize, ct);
@@ -88,11 +87,11 @@ public sealed class GetPagedBooksUseCase
                 HasNextPage = pageDto.HasNextPage,
                 Items = pageDto.Items.Select(x => new BookPageItemDto
                 {
-                    Title = x.Title.Value,
-                    Isbn = x.Isbn.Value,
-                    PublicationDate = x.PublicationDate.Value,
+                    Title = x.Title,
+                    Isbn = x.Isbn,
+                    PublicationDate = x.PublicationDate,
                     Available = x.Available,
-                    Authors = x.Authors.Select(a => new BookPageItemAuthorDto(a)).ToArray()
+                    Authors = x.Authors
                 }).ToArray()
             };
         }
@@ -152,7 +151,7 @@ public sealed class BookPageItemDto
     /// <summary>
     /// Book authors.
     /// </summary>
-    public IReadOnlyCollection<BookPageItemAuthorDto> Authors { get; set; } = Array.Empty<BookPageItemAuthorDto>();
+    public string Authors { get; set; } = null!;
 
     /// <summary>
     /// Is book available to borrow.

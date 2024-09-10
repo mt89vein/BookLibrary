@@ -508,3 +508,5 @@ dotnet_diagnostic.SYSLIB1045.severity = none # use regex generators
 dotnet_diagnostic.IDE0200.severity = none # use method groups
 dotnet_diagnostic.CA1848.severity = none # use logger message for performance
 
+dotnet_diagnostic.RS0030.severity = error
+
