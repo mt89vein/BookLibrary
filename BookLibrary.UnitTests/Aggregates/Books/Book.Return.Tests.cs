@@ -1,6 +1,7 @@
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Domain.Exceptions;
+using static BookLibrary.UnitTests.Aggregates.Books.BookBuilder;
 
 namespace BookLibrary.UnitTests.Aggregates.Books;
 
@@ -14,14 +15,8 @@ internal partial class BookTests
     public void Should_raise_domain_event_when_book_returned()
     {
         // arrange
-        var book = CreateBook();
         var abonentId = new AbonentId(Guid.NewGuid());
-        book.Borrow(
-            abonement: new Abonement(abonentId, 0),
-            borrowedAt: DateTimeOffset.UtcNow,
-            returnBefore: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3))
-        );
-        book.ClearDomainEvents();
+        var book = new BookBuilder().SetBorrowedBy(abonentId).Build();
 
         // act
         book.Return(abonentId, DateTimeOffset.UtcNow);
@@ -34,7 +29,7 @@ internal partial class BookTests
     public void Should_throw_exception_when_try_to_return_without_abonent_id()
     {
         // arrange
-        var book = CreateBook(clearDomainEvents: true);
+        var book = CreateBook();
 
         // act
         void Act()
@@ -50,7 +45,7 @@ internal partial class BookTests
     public void Should_throw_exception_when_try_to_return_not_borrowed_book()
     {
         // arrange
-        var book = CreateBook(clearDomainEvents: true);
+        var book = CreateBook();
 
         // act
         void Act()
@@ -66,16 +61,10 @@ internal partial class BookTests
     public void Should_throw_exception_when_try_to_return_book_borrowed_by_another_abonent()
     {
         // arrange
-        var book = CreateBook();
         var firstAbonentId = new AbonentId(Guid.NewGuid());
         var secondAbonentId = new AbonentId(Guid.NewGuid());
 
-        book.Borrow(
-            abonement: new Abonement(firstAbonentId, 0),
-            borrowedAt: DateTimeOffset.UtcNow,
-            returnBefore: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3))
-        );
-        book.ClearDomainEvents();
+        var book = new BookBuilder().SetBorrowedBy(firstAbonentId).Build();
 
         // act
         void Act()

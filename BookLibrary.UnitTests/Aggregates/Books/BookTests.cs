@@ -1,6 +1,6 @@
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
-using BookLibrary.Domain.ValueObjects;
+using static BookLibrary.UnitTests.Aggregates.Books.BookBuilder;
 
 namespace BookLibrary.UnitTests.Aggregates.Books;
 
@@ -31,43 +31,6 @@ internal sealed partial class BookTests
 
         // assert
         Assert.That(book, Have.NoDomainEvents());
-    }
-
-    /// <summary>
-    /// Creates instance of <see cref="Book"/>.
-    /// </summary>
-    /// <param name="clearDomainEvents">Is need to clear domain events?</param>
-    private static Book CreateBook(bool clearDomainEvents = false)
-    {
-        var book = new Book(new BookId(Guid.NewGuid()),
-            GetDummyBookTitle(),
-            GetDummyIsbn(),
-            new BookPublicationDate(DateOnly.FromDateTime(DateTimeOffset.UtcNow.UtcDateTime)),
-            [GetDummyAuthor()],
-            DateTimeOffset.UtcNow
-        );
-
-        if (clearDomainEvents)
-        {
-            book.ClearDomainEvents();
-        }
-
-        return book;
-    }
-
-    private static BookTitle GetDummyBookTitle()
-    {
-        return new BookTitle("Dummy book title");
-    }
-
-    private static Isbn GetDummyIsbn()
-    {
-        return new Isbn("9780134434421");
-    }
-
-    private static Author GetDummyAuthor()
-    {
-        return new Author("Dummy", "Author");
     }
 
     private static AbonentId GetNewDummyAbonentId()
