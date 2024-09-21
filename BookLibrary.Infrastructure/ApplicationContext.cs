@@ -2,6 +2,7 @@ using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Infrastructure.Books;
+using LinqToDB;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -103,6 +104,34 @@ public sealed class ApplicationContext : DbContext, IApplicationContext
             await NotifyBookChangesAsync(entityEntry, cancellationToken);
         }
 
+        var bookStats = ChangeTracker
+            .Entries<Book>()
+            .Where(x => x.State == EntityState.Added)
+            .GroupBy(x => (x.Entity.Isbn, x.Entity.PublicationDate))
+            .Select(v =>
+            {
+                var item = v.First();
+
+                return new BookStat
+                {
+                    Isbn = item.Entity.Isbn.Value,
+                    PublicationDate = item.Entity.PublicationDate.Value,
+                    AvailableCount = v.Count(),
+                    BorrowedCount = 0,
+                    Authors = string.Join(",",
+                        item.Entity.Authors.Select(x => string.Join(" ", [x.Surname, x.Name, x.Patronymic]))),
+                    Title = item.Entity.Title,
+                };
+            }).ToArray();
+
+        await BookStats
+            .Merge()
+            .Using(bookStats)
+            .OnTargetKey()
+            .UpdateWhenMatched((target, source) => new BookStat { AvailableCount = target.AvailableCount + source.AvailableCount })
+            .InsertWhenNotMatched()
+            .MergeAsync(cancellationToken);
+
         foreach (var entityEntry in ChangeTracker.Entries<BorrowInfo>().ToArray())
         {
             await NotifyBookBorrowInfoChangesAsync(entityEntry, cancellationToken);
@@ -122,8 +151,9 @@ public sealed class ApplicationContext : DbContext, IApplicationContext
     {
         return book.State switch
         {
-            EntityState.Added => _mediator.Publish(new BookCreated(book.Entity), ct),
+            // EntityState.Added => _mediator.Publish(new BookCreated(book.Entity), ct),
             EntityState.Modified => _mediator.Publish(new BookUpdated(book.Entity), ct),
+            EntityState.Added => throw new NotImplementedException(),
             EntityState.Deleted or EntityState.Detached or EntityState.Unchanged or _ => ValueTask.CompletedTask
         };
     }
