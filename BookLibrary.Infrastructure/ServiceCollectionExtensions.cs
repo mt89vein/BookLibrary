@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
 
         services.AddOutboxItem<ApplicationContext, BookStatChange>(o =>
             {
-                o.OutboxItemsLimit = 1000;
+                o.OutboxItemsLimit = 10000;
                 o.WorkerType = EfCoreWorkerTypes.BatchStrictOrdering;
             })
             .WithBatchHandler<BookStatChange, BookStatChangeApplier>();
