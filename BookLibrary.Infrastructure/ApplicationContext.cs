@@ -91,6 +91,13 @@ public sealed class ApplicationContext : DbContext, IApplicationContext
 
         await _domainEventDispatcher.DispatchDomainEventsAsync(cancellationToken);
 
+        var transactionStarted = false;
+        if (Database.CurrentTransaction is null)
+        {
+            await Database.BeginTransactionAsync(cancellationToken);
+            transactionStarted = true;
+        }
+
         foreach (var entityEntry in ChangeTracker.Entries<Book>().ToArray())
         {
             await NotifyBookChangesAsync(entityEntry, cancellationToken);
@@ -101,7 +108,14 @@ public sealed class ApplicationContext : DbContext, IApplicationContext
             await NotifyBookBorrowInfoChangesAsync(entityEntry, cancellationToken);
         }
 
-        return await base.SaveChangesAsync(cancellationToken);
+        var rowsAffected = await base.SaveChangesAsync(cancellationToken);
+
+        if (transactionStarted)
+        {
+            await Database.CommitTransactionAsync(cancellationToken);
+        }
+
+        return rowsAffected;
     }
 
     private ValueTask NotifyBookChangesAsync(EntityEntry<Book> book, CancellationToken ct)

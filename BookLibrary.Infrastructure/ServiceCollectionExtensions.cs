@@ -2,6 +2,7 @@ using BookLibrary.Application.Infrastructure;
 using BookLibrary.Infrastructure.Books;
 using BookLibrary.Infrastructure.ValueConverters;
 using EntityFramework.Exceptions.PostgreSQL;
+using LinqToDB.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -46,6 +47,8 @@ public static class ServiceCollectionExtensions
     /// <returns>Service registrator.</returns>
     public static IServiceCollection AddEntityFramework(this IServiceCollection services)
     {
+        LinqToDBForEFTools.Initialize();
+
         NpgsqlDataSource? npgsqlDataSource = null; // should be singleton
 
         services
