@@ -2,6 +2,8 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" />
+    <PackageReference Include="System.Net.Http" />
+    <PackageReference Include="System.Text.RegularExpressions" />
     <PackageReference Include="Mediator.SourceGenerator" />
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Sstv.DomainExceptions.Extensions.ProblemDetails" />

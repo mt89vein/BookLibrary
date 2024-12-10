@@ -1,4 +1,4 @@
-﻿using BookLibrary.Api.Extensions;
+using BookLibrary.Api.Extensions;
 using BookLibrary.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Sstv.DomainExceptions;
@@ -47,13 +47,24 @@ public static class ServiceCollectionExtensions
             {
                 var exceptionLogger = sp.GetRequiredService<ILogger<DomainException>>();
 
-                settings.OnExceptionCreated += exception =>
+                settings.OnErrorCreated += (errorDescription, exception) =>
                 {
-                    var logLevel = ErrorCodeMapping.IsError(exception.ErrorCode)
-                        ? LogLevel.Error
-                        : LogLevel.Information;
+                    var loglevel = errorDescription.Level switch
+                    {
+                        Level.Undefined => LogLevel.None,
+                        Level.NotError => LogLevel.Information,
+                        Level.Low => LogLevel.Warning,
+                        Level.Medium => LogLevel.Error,
+                        Level.High => LogLevel.Error,
+                        Level.Critical => LogLevel.Critical,
+                        Level.Fatal => LogLevel.Critical,
+                        _ => LogLevel.Error
+                    };
 
-                    exceptionLogger.LogDomainException(logLevel, exception, exception.ErrorCode, exception.Message);
+                    if (exception is DomainException domainException)
+                    {
+                        exceptionLogger.LogDomainException(loglevel, domainException, errorDescription.ErrorCode, domainException.Message);
+                    }
                 };
             };
         });
@@ -76,13 +87,13 @@ public static class ServiceCollectionExtensions
                     {
                         ctx.ProblemDetails.Status =
                             ctx.HttpContext.Response.StatusCode =
-                                ErrorCodeMapping.MapToStatusCode(de.ErrorCode);
+                                ErrorCodeMapping.MapToStatusCode(de.GetDescription());
                     }
                     else
                     {
                         ctx.ProblemDetails = _defaultErrorResponse;
                         ctx.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                        ErrorCodesMeter.Measure(_defaultErrorCodeDescription);
+                        ErrorCodesMeter.Measure(_defaultErrorCodeDescription, null);
                     }
 
                     var addExceptionDetails = !ctx.HttpContext.RequestServices.GetRequiredService<IHostEnvironment>()
@@ -115,11 +126,11 @@ public static class ServiceCollectionExtensions
     {
         return builder.ConfigureApiBehaviorOptions(o =>
         {
-            o.InvalidModelStateResponseFactory = context =>
+            o.InvalidModelStateResponseFactory = static (ActionContext context) =>
             {
                 var errorDescription = ErrorCodes.InvalidData.GetDescription();
-                ErrorCodesMeter.Measure(errorDescription);
-                var statusCode = ErrorCodeMapping.MapToStatusCode(errorDescription.ErrorCode);
+                ErrorCodesMeter.Measure(errorDescription, null);
+                var statusCode = ErrorCodeMapping.MapToStatusCode(errorDescription);
 
                 var problemDetails = new ValidationProblemDetails(context.ModelState)
                 {

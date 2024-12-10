@@ -1,4 +1,5 @@
-﻿using BookLibrary.Domain.Exceptions;
+using BookLibrary.Domain.Exceptions;
+using Sstv.DomainExceptions;
 using System.Collections.Frozen;
 
 namespace BookLibrary.Api.ProblemDetails;
@@ -13,17 +14,6 @@ public static class ErrorCodeMapping
     /// </summary>
     private static readonly FrozenDictionary<string, int> _statusCodeMap = new Dictionary<ErrorCodes, int>
     {
-        // 2xx
-        [ErrorCodes.AbonentNotFound] = StatusCodes.Status200OK,
-        [ErrorCodes.BookNotFound] = StatusCodes.Status200OK,
-        [ErrorCodes.CannotReturnNotBorrowedBook] = StatusCodes.Status200OK,
-        [ErrorCodes.BookNotBorrowedByAnyone] = StatusCodes.Status200OK,
-        [ErrorCodes.BookNotBorrowedByAbonent] = StatusCodes.Status200OK,
-        [ErrorCodes.EmailAlreadyExists] = StatusCodes.Status200OK,
-        [ErrorCodes.ThereNoBookThatCanBeBorrowed] = StatusCodes.Status200OK,
-        [ErrorCodes.TooManyBooksBorrowedAlready] = StatusCodes.Status200OK,
-        [ErrorCodes.BookNotFoundOrNotBorrowedByAbonent] = StatusCodes.Status200OK,
-
         // 4xx
         [ErrorCodes.InvalidData] = StatusCodes.Status400BadRequest,
         [ErrorCodes.InvalidIsbn] = StatusCodes.Status400BadRequest,
@@ -55,27 +45,19 @@ public static class ErrorCodeMapping
     /// <summary>
     /// Map error code to status code.
     /// </summary>
-    /// <param name="errorCode">ErrorCode.</param>
+    /// <param name="errorDescription">ErrorDescrption.</param>
     /// <returns>HTTP status code</returns>
-    public static int MapToStatusCode(string errorCode)
+    public static int MapToStatusCode(ErrorDescription errorDescription)
     {
-        ArgumentNullException.ThrowIfNull(errorCode);
+        ArgumentNullException.ThrowIfNull(errorDescription);
 
-        if (!_statusCodeMap.TryGetValue(errorCode, out var statusCode))
+        if (_statusCodeMap.TryGetValue(errorDescription.ErrorCode, out var statusCode))
         {
-            return StatusCodes.Status500InternalServerError;
+            return statusCode;
         }
 
-        return statusCode;
-    }
-
-    /// <summary>
-    /// Is error code caused by exceptional case.
-    /// </summary>
-    /// <param name="errorCode">Error code.</param>
-    /// <returns>True, when error occured.</returns>
-    public static bool IsError(string errorCode)
-    {
-        return MapToStatusCode(errorCode) >= 400;
+        return errorDescription.Level == Level.NotError
+            ? StatusCodes.Status200OK
+            : StatusCodes.Status500InternalServerError;
     }
 }

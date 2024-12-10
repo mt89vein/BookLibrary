@@ -510,3 +510,6 @@ dotnet_diagnostic.CA1848.severity = none # use logger message for performance
 
 dotnet_diagnostic.RS0030.severity = error
 
+# use block namespace
+dotnet_diagnostic.IDE0160.severity = silent
+
