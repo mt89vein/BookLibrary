@@ -29,23 +29,20 @@ internal partial class BookTests
     }
 
     [Test]
-    public void Should_throw_exception_when_try_to_borrow_book_with_return_date_in_the_past()
+    public void Should_fail_when_try_to_borrow_book_with_return_date_in_the_past()
     {
         // arrange
         var book = CreateBook();
 
         // act
-        void Act()
-        {
-            book.Borrow(
-                abonement: new Abonement(GetNewDummyAbonentId(), 0),
-                borrowedAt: DateTimeOffset.UtcNow,
-                returnBefore: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1))
-            );
-        }
+        var borrowResult = book.Borrow(
+            abonement: new Abonement(GetNewDummyAbonentId(), 0),
+            borrowedAt: DateTimeOffset.UtcNow,
+            returnBefore: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1))
+        );
 
         // assert
-        Assert.That(Act, Throws.ArgumentException);
+        Assert.That(borrowResult, ErrorCodes.InvalidBookBorrowingPeriod.Expect());
     }
 
     [Test]
@@ -72,7 +69,7 @@ internal partial class BookTests
     }
 
     [Test]
-    public void Should_throw_exception_when_try_to_borrow_book_that_was_already_borrowed_by_another_abonent()
+    public void Should_fail_when_try_to_borrow_book_that_was_already_borrowed_by_another_abonent()
     {
         // arrange
         var firstAbonentId = new AbonentId(Guid.NewGuid());
@@ -81,17 +78,14 @@ internal partial class BookTests
         var book = new BookBuilder().SetBorrowedBy(firstAbonentId).Build();
 
         // act
-        void Act()
-        {
-            book.Borrow(
-                abonement: new Abonement(secondAbonentId, 0),
-                borrowedAt: DateTimeOffset.UtcNow,
-                returnBefore: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10))
-            );
-        }
+        var borrowResult = book.Borrow(
+            abonement: new Abonement(secondAbonentId, 0),
+            borrowedAt: DateTimeOffset.UtcNow,
+            returnBefore: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10))
+        );
 
         // assert
-        Assert.That(Act, ErrorCodes.BookAlreadyBorrowed.Expect());
+        Assert.That(borrowResult, ErrorCodes.BookAlreadyBorrowed.Expect());
     }
 
     [Test]
@@ -102,33 +96,34 @@ internal partial class BookTests
         var book = new BookBuilder().SetBorrowedBy(abonentId).Build();
 
         // act
-        book.Borrow(
+        var borrowResult = book.Borrow(
             abonement: new Abonement(abonentId, 0),
             borrowedAt: DateTimeOffset.UtcNow,
             returnBefore: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10))
         );
 
         // assert
-        Assert.That(book, Have.NoDomainEvents());
+        Assert.Multiple(() =>
+        {
+            Assert.That(borrowResult.IsSuccess, Is.True);
+            Assert.That(book, Have.NoDomainEvents());
+        });
     }
 
     [Test]
-    public void Should_throw_exception_when_try_to_borrow_book_with_exceeded_limit_of_books()
+    public void Should_fail_when_try_to_borrow_book_with_exceeded_limit_of_books()
     {
         // arrange
         var book = CreateBook(clearDomainEvents: true);
 
         // act
-        void Act()
-        {
-            book.Borrow(
-                abonement: new Abonement(GetNewDummyAbonentId(), 3),
-                borrowedAt: DateTimeOffset.UtcNow,
-                returnBefore: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10))
-            );
-        }
+        var borrowResult = book.Borrow(
+            abonement: new Abonement(GetNewDummyAbonentId(), 3),
+            borrowedAt: DateTimeOffset.UtcNow,
+            returnBefore: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10))
+        );
 
         // assert
-        Assert.That(Act, ErrorCodes.TooManyBooksBorrowedAlready.Expect());
+        Assert.That(borrowResult, ErrorCodes.TooManyBooksBorrowedAlready.Expect());
     }
 }

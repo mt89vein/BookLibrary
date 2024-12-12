@@ -1,7 +1,8 @@
-﻿using BookLibrary.Application.Infrastructure;
+using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Domain.Exceptions;
 using BookLibrary.Domain.ValueObjects;
+using FluentResults;
 using Microsoft.Extensions.Logging;
 
 namespace BookLibrary.Application.Features.Books.AddNewBook;
@@ -29,7 +30,7 @@ public record BookAuthor(string Name, string Surname, string? Patronymic);
 /// <summary>
 /// UseCase - add new book.
 /// </summary>
-public sealed class AddNewBookUseCase
+public sealed partial class AddNewBookUseCase
 {
     private readonly IApplicationContext _ctx;
     private readonly IUuidGenerator _uuidGenerator;
@@ -57,21 +58,21 @@ public sealed class AddNewBookUseCase
     /// <exception cref="BookLibraryException">
     /// When there are problem with adding books.
     /// </exception>
-    public async Task ExecuteAsync(AddNewBookCommand command, CancellationToken ct = default)
+    public async Task<Result> ExecuteAsync(AddNewBookCommand command, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(command);
 
         using var _ = _logger.BeginScope(new Dictionary<string, object?>
         {
-            ["UserId"] = command.UserId.ToString(),
-            ["ISBN"] = command.Isbn,
-            ["PublicationDate"] = command.PublicationDate.ToString(),
-            ["Count"] = command.Count.ToString(),
+            [LoggingScope.User.ID] = command.UserId.ToString(),
+            [LoggingScope.Book.ISBN] = command.Isbn,
+            [LoggingScope.Book.PUBLICATION_DATE] = command.PublicationDate.ToString(),
+            [LoggingScope.Book.COUNT] = command.Count.ToString(),
         });
 
         try
         {
-            _logger.LogInformation("Adding {Count} books", command.Count);
+            AddingNewBooks(command.Count);
 
             var books = Enumerable.Range(0, command.Count).Select(_ => new Book(
                 new BookId(_uuidGenerator.GenerateNew()),
@@ -84,13 +85,29 @@ public sealed class AddNewBookUseCase
 
             _ctx.Books.AddRange(books);
 
+            NewBooksAdded(books.Length);
+
             await _ctx.SaveChangesAsync(ct);
 
-            _logger.LogInformation("Added {Count} books", command.Count);
+            return Result.Ok();
         }
         catch (Exception e) when (e is not BookLibraryException)
         {
-            throw ErrorCodes.BookAddingFailed.ToException(e);
+            return Result
+                .Fail(ErrorCodes.BookAddingFailed.ToDomainError(e))
+                .Log(nameof(AddNewBookUseCase));
         }
     }
+
+    [LoggerMessage(
+        eventId: 0,
+        level: LogLevel.Information,
+        message: "Adding new {Count} books")]
+    private partial void AddingNewBooks(int count);
+
+    [LoggerMessage(
+        eventId: 1,
+        level: LogLevel.Information,
+        message: "Added {Count} books")]
+    private partial void NewBooksAdded(int count);
 }

@@ -16,7 +16,7 @@ namespace BookLibrary.Api.Features;
 [ApiExplorerSettings(GroupName = "v1")]
 [Route("api/v1/books")]
 [Tags("Books")]
-public sealed class GetPagedBooksController : ControllerBase
+public sealed class GetPagedBooksController : ApiController
 {
     /// <summary>
     /// Returns books with paging.
@@ -41,9 +41,9 @@ public sealed class GetPagedBooksController : ControllerBase
 
         var query = new GetPagedBooksQuery(model.Page, model.PageSize, model.Title, model.Isbn);
 
-        var pageDto = await useCase.ExecuteAsync(query, ct);
+        var result = await useCase.ExecuteAsync(query, ct);
 
-        return Ok(pageDto);
+        return Ok(result);
     }
 }
 

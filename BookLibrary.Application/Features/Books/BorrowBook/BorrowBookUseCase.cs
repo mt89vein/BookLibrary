@@ -1,8 +1,9 @@
-﻿using BookLibrary.Application.Infrastructure;
+using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Domain.Exceptions;
 using BookLibrary.Domain.ValueObjects;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -27,7 +28,7 @@ public sealed record BorrowBookCommand(
 /// <summary>
 /// UseCase - borrow book.
 /// </summary>
-public sealed class BorrowBookUseCase
+public sealed partial class BorrowBookUseCase
 {
     private readonly IApplicationContext _ctx;
     private readonly TimeProvider _timeProvider;
@@ -52,39 +53,54 @@ public sealed class BorrowBookUseCase
     /// <exception cref="BookLibraryException">
     /// When there no free book found or abonent can't borrow book.
     /// </exception>
-    public async Task ExecuteAsync(BorrowBookCommand command, CancellationToken ct = default)
+    public async Task<ResultBase> ExecuteAsync(BorrowBookCommand command, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(command);
 
         using var _ = _logger.BeginScope(new Dictionary<string, object?>
         {
-            ["AbonentId"] = command.AbonentId.ToString(),
-            ["BookId"] = command.BookId?.ToString(),
-            ["ISBN"] = command.Isbn,
-            ["PublicationDate"] = command.PublicationDate?.ToString() ?? "N/A",
-            ["ReturnDate"] = command.ReturnDate?.ToString() ?? "N/A"
+            [LoggingScope.Abonent.ID] = command.AbonentId.ToString(),
+            [LoggingScope.Book.ID] = command.BookId?.ToString(),
+            [LoggingScope.Book.ISBN] = command.Isbn,
+            [LoggingScope.Book.PUBLICATION_DATE] = command.PublicationDate?.ToString() ?? "N/A",
+            [LoggingScope.Book.RETURN_DATE] = command.ReturnDate?.ToString() ?? "N/A"
         });
 
         try
         {
-            _logger.LogInformation("Processing borrow book request");
+            BorrowBookRequestProcessing(command.BookId);
 
-            var book = await FetchBookAsync(command, ct);
+            var bookFetchResult = await FetchBookAsync(command, ct);
+
+            if (bookFetchResult.IsFailed)
+            {
+                return bookFetchResult.Log(nameof(BorrowBookUseCase));
+            }
+
             var abonement = await GetAbonenementAsync(command, ct);
 
-            book.Borrow(
+            var borrowResult = bookFetchResult.Value.Borrow(
                 abonement,
                 borrowedAt: _timeProvider.GetUtcNow(),
                 command.ReturnDate
             );
 
+            if (borrowResult.IsFailed)
+            {
+                return borrowResult.Log(nameof(BorrowBookUseCase));
+            }
+
+            BorrowBookRequestProcessed(bookFetchResult.Value.Id);
+
             await _ctx.SaveChangesAsync(ct);
 
-            _logger.LogInformation("Borrow book request processed");
+            return Result.Ok();
         }
         catch (Exception e) when (e is not BookLibraryException)
         {
-            throw ErrorCodes.BookBorrowingFailed.ToException(e);
+            return Result
+                .Fail(ErrorCodes.BookBorrowingFailed.ToDomainError(e))
+                .Log(nameof(BorrowBookUseCase));
         }
     }
 
@@ -96,26 +112,35 @@ public sealed class BorrowBookUseCase
     /// <exception cref="BookLibraryException">
     /// When there no free book found.
     /// </exception>
-    private async Task<Book> FetchBookAsync(BorrowBookCommand command, CancellationToken ct)
+    private async Task<Result<Book>> FetchBookAsync(BorrowBookCommand command, CancellationToken ct)
     {
         if (command.BookId.HasValue)
         {
-            return await _ctx.Books
+            var bookById = await _ctx.Books
                 .AsTracking()
                 .FirstOrDefaultAsync(
                     x => x.Id == new BookId(command.BookId.Value),
                     ct
-                ) ?? throw ErrorCodes.BookNotFound.ToException();
+                );
+
+            return bookById is not null
+                ? Result.Ok(bookById)
+                : ErrorCodes.BookNotFound.ToDomainError();
         }
 
-        return await _ctx.Books
+        var book = await _ctx.Books
             .AsTracking()
             .FirstOrDefaultAsync(
-            x => x.Isbn == new Isbn(command.Isbn!) &&
-                 (command.PublicationDate == null || x.PublicationDate == new BookPublicationDate(command.PublicationDate.Value)) &&
-                 x.BorrowInfo == null,
-            ct
-        ) ?? throw ErrorCodes.ThereNoBookThatCanBeBorrowed.ToException();
+                x => x.Isbn == new Isbn(command.Isbn!) &&
+                     (command.PublicationDate == null ||
+                      x.PublicationDate == new BookPublicationDate(command.PublicationDate.Value)) &&
+                     x.BorrowInfo == null,
+                ct
+            );
+
+        return book is not null
+            ? Result.Ok(book)
+            : ErrorCodes.ThereNoBookThatCanBeBorrowed.ToDomainError();
     }
 
     /// <summary>
@@ -135,4 +160,16 @@ public sealed class BorrowBookUseCase
 
         return new Abonement(new AbonentId(command.AbonentId), booksCount);
     }
+
+    [LoggerMessage(
+        eventId: 0,
+        level: LogLevel.Information,
+        message: "Processing borrow book {BookId} request")]
+    private partial void BorrowBookRequestProcessing(Guid? bookId);
+
+    [LoggerMessage(
+        eventId: 1,
+        level: LogLevel.Information,
+        message: "Borrow book {BookId} request processed")]
+    private partial void BorrowBookRequestProcessed(BookId bookId);
 }

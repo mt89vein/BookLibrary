@@ -1,3 +1,4 @@
+using FluentResults;
 using Sstv.DomainExceptions;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
@@ -109,4 +110,64 @@ public enum ErrorCodes
 
     [ErrorDescription(Description = "This book not found or not borrowed by abonent", Level = Level.NotError)]
     BookNotFoundOrNotBorrowedByAbonent = 32,
+
+    [ErrorDescription(Description = "Books getting failed", Level = Level.Critical)]
+    GetBookPageFailed = 33,
+
+    [ErrorDescription(Description = "Book return date must be later than borrowing time", Level = Level.Low)]
+    InvalidBookBorrowingPeriod = 34,
+}
+
+/// <summary>
+/// Domain error.
+/// </summary>
+public sealed class DomainErrorResult : Error
+{
+    /// <summary>
+    /// Error code.
+    /// </summary>
+    public ErrorCodes ErrorCode { get; }
+
+    /// <summary>
+    /// Unique error identifier.
+    /// </summary>
+    public Guid ErrorId { get; }
+
+    /// <summary>
+    /// Inner exception.
+    /// </summary>
+    public Exception? InnerException { get; }
+
+    /// <summary>
+    /// Creates new instance of <see cref="DomainErrorResult"/>.
+    /// </summary>
+    /// <param name="errorCode">Error code.</param>
+    /// <param name="innerException">Exception if any.</param>
+    public DomainErrorResult(ErrorCodes errorCode, Exception? innerException = null)
+    {
+        ErrorId = Guid.CreateVersion7();
+        ErrorCode = errorCode;
+        InnerException = innerException;
+
+        var errorDescription = errorCode.GetDescription();
+        Message = $"{errorDescription.ErrorCode}: {errorDescription.Description}";
+        Metadata.Add("Code", errorDescription.ErrorCode);
+        Metadata.Add("CriticalityLevel", Enum.GetName(errorDescription.Level));
+        Metadata.Add("ErrorId", ErrorId.ToString());
+
+        if (innerException is not null)
+        {
+            CausedBy(innerException);
+        }
+
+        DomainExceptionSettings.Instance.OnErrorCreated?.Invoke(errorDescription, this);
+    }
+}
+
+public static class ErrorCodeExtensions
+{
+    public static DomainErrorResult ToDomainError(this ErrorCodes errorCodes, Exception? innerException = null)
+    {
+        return new DomainErrorResult(errorCodes, innerException);
+    }
 }

@@ -26,39 +26,33 @@ internal partial class BookTests
     }
 
     [Test]
-    public void Should_throw_exception_when_try_to_return_without_abonent_id()
+    public void Should_fail_when_try_to_return_without_abonent_id()
     {
         // arrange
         var book = CreateBook();
 
         // act
-        void Act()
-        {
-            book.Return(default, DateTimeOffset.UtcNow);
-        }
+        var returnResult = book.Return(default, DateTimeOffset.UtcNow);
 
         // assert
-        Assert.That(Act, ErrorCodes.InvalidBookReturnAbonentId.Expect());
+        Assert.That(returnResult, ErrorCodes.InvalidBookReturnAbonentId.Expect());
     }
 
     [Test]
-    public void Should_throw_exception_when_try_to_return_not_borrowed_book()
+    public void Should_fail_when_try_to_return_not_borrowed_book()
     {
         // arrange
         var book = CreateBook();
 
         // act
-        void Act()
-        {
-            book.Return(GetNewDummyAbonentId(), DateTimeOffset.UtcNow);
-        }
+        var returnResult = book.Return(GetNewDummyAbonentId(), DateTimeOffset.UtcNow);
 
         // assert
-        Assert.That(Act, ErrorCodes.BookNotBorrowedByAnyone.Expect());
+        Assert.That(returnResult, ErrorCodes.BookNotBorrowedByAnyone.Expect());
     }
 
     [Test]
-    public void Should_throw_exception_when_try_to_return_book_borrowed_by_another_abonent()
+    public void Should_fail_when_try_to_return_book_borrowed_by_another_abonent()
     {
         // arrange
         var firstAbonentId = new AbonentId(Guid.NewGuid());
@@ -67,12 +61,9 @@ internal partial class BookTests
         var book = new BookBuilder().SetBorrowedBy(firstAbonentId).Build();
 
         // act
-        void Act()
-        {
-            book.Return(secondAbonentId, DateTimeOffset.UtcNow);
-        }
+        var borrowResult = book.Return(secondAbonentId, DateTimeOffset.UtcNow);
 
         // assert
-        Assert.That(Act, ErrorCodes.BookNotBorrowedByAbonent.Expect());
+        Assert.That(borrowResult, ErrorCodes.BookNotBorrowedByAbonent.Expect());
     }
 }

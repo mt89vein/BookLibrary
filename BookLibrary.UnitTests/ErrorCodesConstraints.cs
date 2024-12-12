@@ -1,4 +1,5 @@
 using BookLibrary.Domain.Exceptions;
+using FluentResults;
 using NUnit.Framework.Constraints;
 
 namespace BookLibrary.UnitTests;
@@ -14,8 +15,9 @@ internal static class ErrorCodesConstraints
     /// <param name="errorCode">Expected error code.</param>
     public static Constraint Expect(this ErrorCodes errorCode)
     {
-        return Throws.TypeOf<BookLibraryException>()
-            .With.Property(nameof(BookLibraryException.ErrorCode))
-            .EqualTo(errorCode.GetErrorCode());
+        return Is.AssignableTo<IResultBase>()
+            .And
+            .Property(nameof(IResultBase.Errors))
+            .Some.Matches<DomainErrorResult>(x => x.ErrorCode == errorCode);
     }
 }

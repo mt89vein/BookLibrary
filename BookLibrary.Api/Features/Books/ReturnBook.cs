@@ -1,4 +1,4 @@
-﻿using BookLibrary.Api.Extensions;
+using BookLibrary.Api.Extensions;
 using BookLibrary.Application.Features.Books.ReturnBook;
 using FluentValidation;
 using JetBrains.Annotations;
@@ -18,7 +18,7 @@ namespace BookLibrary.Api.Features;
 [ApiExplorerSettings(GroupName = "v1")]
 [Route("api/v1/books")]
 [Tags("Books")]
-public sealed class ReturnBookController : ControllerBase
+public sealed class ReturnBookController : ApiController
 {
     /// <summary>
     /// Return book to library.
@@ -45,9 +45,9 @@ public sealed class ReturnBookController : ControllerBase
             AbonentId: HttpContext.GetUserId()
         );
 
-        await useCase.ExecuteAsync(command, ct);
+        var result = await useCase.ExecuteAsync(command, ct);
 
-        return Ok();
+        return Ok(result);
     }
 }
 

@@ -6,6 +6,7 @@ using BookLibrary.Api.Swagger;
 using BookLibrary.Application;
 using BookLibrary.Infrastructure;
 using BookLibrary.Infrastructure.OpenTelemetry;
+using FluentResults;
 using Sstv.DomainExceptions.Extensions.DependencyInjection;
 
 namespace BookLibrary.Api;
@@ -36,6 +37,11 @@ public class Startup
         {
             app.UseDeveloperExceptionPage();
         }
+
+        Result.Setup(b =>
+        {
+            b.Logger = new FluentLogger(app.ApplicationServices.GetRequiredService<ILogger<FluentLogger>>());
+        });
 
         app.UseErrorCodesDebugView();
         app.UseExceptionHandler();

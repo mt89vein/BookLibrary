@@ -1,4 +1,4 @@
-﻿using BookLibrary.Api.Extensions;
+using BookLibrary.Api.Extensions;
 using BookLibrary.Application.Features.Books.BorrowBook;
 using FluentValidation;
 using JetBrains.Annotations;
@@ -17,7 +17,7 @@ namespace BookLibrary.Api.Features;
 [ApiExplorerSettings(GroupName = "v1")]
 [Route("api/v1/books")]
 [Tags("Books")]
-public sealed class BorrowBookController : ControllerBase
+public sealed class BorrowBookController : ApiController
 {
     /// <summary>
     /// Borrow book from library.
@@ -47,9 +47,9 @@ public sealed class BorrowBookController : ControllerBase
             model.ReturnDate
         );
 
-        await useCase.ExecuteAsync(command, ct);
+        var result = await useCase.ExecuteAsync(command, ct);
 
-        return Ok();
+        return Ok(result);
     }
 }
 

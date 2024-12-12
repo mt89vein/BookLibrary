@@ -1,7 +1,8 @@
-﻿using BookLibrary.Application.Infrastructure;
+using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Domain.Exceptions;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -16,7 +17,7 @@ public sealed record GetBorrowedBooksQuery(Guid AbonentId);
 /// <summary>
 /// UseCase - get borrowed books by abonent.
 /// </summary>
-public sealed class GetBorrowedBooksUseCase
+public sealed partial class GetBorrowedBooksUseCase
 {
     private readonly IApplicationContext _ctx;
     private readonly ILogger<GetBorrowedBooksUseCase> _logger;
@@ -38,7 +39,7 @@ public sealed class GetBorrowedBooksUseCase
     /// <exception cref="BookLibraryException">
     /// When can't return borrowed books.
     /// </exception>
-    public async Task<BorrowedBooksDto> ExecuteAsync(GetBorrowedBooksQuery query, CancellationToken ct = default)
+    public async Task<Result<BorrowedBooksDto>> ExecuteAsync(GetBorrowedBooksQuery query, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(query);
 
@@ -46,26 +47,40 @@ public sealed class GetBorrowedBooksUseCase
 
         using var _ = _logger.BeginScope(new Dictionary<string, object?>
         {
-            ["AbonentId"] = abonentId.ToString()
+            [LoggingScope.Abonent.ID] = abonentId.ToString()
         });
 
         try
         {
-            _logger.LogDebug("Getting borrowed books by abonentId");
+            GettingBorrowedBooksByAbonentId(abonentId);
 
             var books = await _ctx.Books
                 .Where(x => x.BorrowInfo != null && x.BorrowInfo.AbonentId == abonentId)
                 .ToArrayAsync(cancellationToken: ct);
 
-            _logger.LogDebug("Successfully get borrowed books by abonentId");
+            GetBorrowedBooksSucceeded(abonentId);
 
             return new BorrowedBooksDto(books);
         }
         catch (Exception e) when (e is not BookLibraryException)
         {
-            throw ErrorCodes.BorrowedBooksGettingFailed.ToException(e);
+            return Result
+                .Fail(ErrorCodes.BorrowedBooksGettingFailed.ToDomainError(e))
+                .Log(nameof(GetBorrowedBooksUseCase));
         }
     }
+
+    [LoggerMessage(
+        eventId: 0,
+        level: LogLevel.Information,
+        message: "Getting borrowed books by {AbonentId}")]
+    private partial void GettingBorrowedBooksByAbonentId(AbonentId abonentId);
+
+    [LoggerMessage(
+        eventId: 1,
+        level: LogLevel.Information,
+        message: "Successfully get borrowed books by {AbonentId}")]
+    private partial void GetBorrowedBooksSucceeded(AbonentId abonentId);
 }
 
 /// <summary>

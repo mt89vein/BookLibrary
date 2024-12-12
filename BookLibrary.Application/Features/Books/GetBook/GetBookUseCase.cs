@@ -1,7 +1,8 @@
-﻿using BookLibrary.Application.Infrastructure;
+using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Domain.Exceptions;
+using FluentResults;
 using Microsoft.Extensions.Logging;
 
 namespace BookLibrary.Application.Features.Books.GetBook;
@@ -16,7 +17,7 @@ public sealed record GetBookByIdQuery(Guid BookId, Guid AbonentId);
 /// <summary>
 /// UseCase - get book by id.
 /// </summary>
-public sealed class GetBookUseCase
+public sealed partial class GetBookUseCase
 {
     private readonly IApplicationContext _ctx;
     private readonly ILogger<GetBookUseCase> _logger;
@@ -38,7 +39,7 @@ public sealed class GetBookUseCase
     /// <exception cref="BookLibraryException">
     /// When there are problem with getting book by id.
     /// </exception>
-    public async Task<BookDto> ExecuteAsync(GetBookByIdQuery query, CancellationToken ct = default)
+    public async Task<Result<BookDto>> ExecuteAsync(GetBookByIdQuery query, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(query);
 
@@ -46,25 +47,60 @@ public sealed class GetBookUseCase
 
         using var _ = _logger.BeginScope(new Dictionary<string, object?>
         {
-            ["BookId"] = bookId.ToString()
+            [LoggingScope.Book.ID] = bookId.ToString()
         });
 
         try
         {
-            _logger.LogDebug("Getting book by id");
+            GettingBookById(bookId);
 
-            var book = await _ctx.Books.FindAsync([bookId], ct)
-                       ?? throw ErrorCodes.BookNotFound.ToException();
+            var fetchBookResult = await FetchBookByIdAsync(bookId, ct);
 
-            _logger.LogDebug("Successfully get book by id");
+            if (fetchBookResult.IsFailed)
+            {
+                return fetchBookResult
+                    .ToResult()
+                    .Log(nameof(GetBookUseCase));
+            }
 
-            return new BookDto(book, new AbonentId(query.AbonentId));
+            GetBookSucceed(bookId);
+
+            return new BookDto(fetchBookResult.Value, new AbonentId(query.AbonentId));
         }
         catch (Exception e) when (e is not BookLibraryException)
         {
-            throw ErrorCodes.BookGettingFailed.ToException(e);
+            return Result
+                .Fail(ErrorCodes.BookGettingFailed.ToDomainError(e))
+                .Log(nameof(GetBookUseCase));
         }
     }
+
+    /// <summary>
+    /// Fetches book by it's identifier.
+    /// </summary>
+    /// <param name="bookId">Book identifier.</param>
+    /// <param name="ct">Token for cancelling operation.</param>
+    /// <returns>Book or failed result.</returns>
+    private async ValueTask<Result<Book>> FetchBookByIdAsync(BookId bookId, CancellationToken ct)
+    {
+        var bookById = await _ctx.Books.FindAsync([bookId], ct);
+
+        return bookById is not null
+            ? Result.Ok(bookById)
+            : ErrorCodes.BookNotFound.ToDomainError();
+    }
+
+    [LoggerMessage(
+        eventId: 0,
+        level: LogLevel.Information,
+        message: "Getting book {BookId}")]
+    private partial void GettingBookById(BookId bookId);
+
+    [LoggerMessage(
+        eventId: 1,
+        level: LogLevel.Information,
+        message: "Successfully get book by {BookId}")]
+    private partial void GetBookSucceed(BookId bookId);
 }
 
 /// <summary>

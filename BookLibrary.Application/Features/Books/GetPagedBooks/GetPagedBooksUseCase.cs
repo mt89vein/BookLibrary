@@ -2,6 +2,7 @@ using BookLibrary.Application.Dto;
 using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Domain.Exceptions;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -24,7 +25,7 @@ public sealed record GetPagedBooksQuery(
 /// <summary>
 /// UseCase - get paged books.
 /// </summary>
-public sealed class GetPagedBooksUseCase
+public sealed partial class GetPagedBooksUseCase
 {
     private readonly IApplicationContext _ctx;
     private readonly ILogger<GetPagedBooksUseCase> _logger;
@@ -46,13 +47,13 @@ public sealed class GetPagedBooksUseCase
     /// <exception cref="BookLibraryException">
     /// When there are problem with getting book by id.
     /// </exception>
-    public async Task<BookPageDto> ExecuteAsync(GetPagedBooksQuery query, CancellationToken ct = default)
+    public async Task<Result<BookPageDto>> ExecuteAsync(GetPagedBooksQuery query, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(query);
 
         try
         {
-            _logger.LogDebug("Getting book page");
+            GettingBooksPage();
 
             var queryable = _ctx.BookStats.AsQueryable();
 
@@ -78,7 +79,7 @@ public sealed class GetPagedBooksUseCase
                 .OrderByDescending(b => b.PublicationDate)
                 .ToPagedListAsync(query.Page, query.PageSize, ct);
 
-            _logger.LogDebug("Successfully get book page");
+            GetBooksPageSucceeded();
 
             return new BookPageDto
             {
@@ -97,9 +98,23 @@ public sealed class GetPagedBooksUseCase
         }
         catch (Exception e) when (e is not BookLibraryException)
         {
-            throw ErrorCodes.BookGettingFailed.ToException(e);
+            return Result
+                .Fail(ErrorCodes.GetBookPageFailed.ToDomainError(e))
+                .Log(nameof(GetPagedBooksUseCase));
         }
     }
+
+    [LoggerMessage(
+        eventId: 0,
+        level: LogLevel.Information,
+        message: "Getting book page")]
+    private partial void GettingBooksPage();
+
+    [LoggerMessage(
+        eventId: 1,
+        level: LogLevel.Information,
+        message: "Successfully get book page")]
+    private partial void GetBooksPageSucceeded();
 }
 
 /// <summary>

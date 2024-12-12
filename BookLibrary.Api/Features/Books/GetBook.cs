@@ -1,4 +1,4 @@
-﻿using BookLibrary.Api.Extensions;
+using BookLibrary.Api.Extensions;
 using BookLibrary.Application.Features.Books.GetBook;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +17,7 @@ namespace BookLibrary.Api.Features;
 [ApiExplorerSettings(GroupName = "v1")]
 [Route("api/v1/books")]
 [Tags("Books")]
-public sealed class GetBookController : ControllerBase
+public sealed class GetBookController : ApiController
 {
     /// <summary>
     /// Returns book by id.

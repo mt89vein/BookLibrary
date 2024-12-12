@@ -49,20 +49,19 @@ public static class ServiceCollectionExtensions
 
                 settings.OnErrorCreated += (errorDescription, exception) =>
                 {
-                    var loglevel = errorDescription.Level switch
-                    {
-                        Level.Undefined => LogLevel.None,
-                        Level.NotError => LogLevel.Information,
-                        Level.Low => LogLevel.Warning,
-                        Level.Medium => LogLevel.Error,
-                        Level.High => LogLevel.Error,
-                        Level.Critical => LogLevel.Critical,
-                        Level.Fatal => LogLevel.Critical,
-                        _ => LogLevel.Error
-                    };
-
                     if (exception is DomainException domainException)
                     {
+                        var loglevel = errorDescription.Level switch
+                        {
+                            Level.Undefined => LogLevel.None,
+                            Level.NotError => LogLevel.Information,
+                            Level.Low => LogLevel.Warning,
+                            Level.Medium => LogLevel.Error,
+                            Level.High => LogLevel.Error,
+                            Level.Critical => LogLevel.Critical,
+                            Level.Fatal => LogLevel.Critical,
+                            _ => LogLevel.Error
+                        };
                         exceptionLogger.LogDomainException(loglevel, domainException, errorDescription.ErrorCode, domainException.Message);
                     }
                 };
@@ -96,12 +95,14 @@ public static class ServiceCollectionExtensions
                         ErrorCodesMeter.Measure(_defaultErrorCodeDescription, null);
                     }
 
-                    var addExceptionDetails = !ctx.HttpContext.RequestServices.GetRequiredService<IHostEnvironment>()
-                        .IsProduction();
-
-                    if (addExceptionDetails && ctx.Exception is not null)
+                    if (ctx.Exception is not null)
                     {
-                        ctx.ProblemDetails.Extensions["exceptionDetails"] = ctx.Exception.ToString();
+                        var addErrorDetails = !ctx.HttpContext.RequestServices.GetRequiredService<IHostEnvironment>().IsProduction();
+
+                        if (addErrorDetails)
+                        {
+                            ctx.ProblemDetails.Extensions["errorDetails"] = ctx.Exception.ToString();
+                        }
                     }
 
                     if (!ctx.ProblemDetails.Extensions.ContainsKey(TRACE_ID_KEY))
