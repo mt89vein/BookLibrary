@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace BookLibrary.Application.Infrastructure;
 
 /// <summary>
 /// Logging scope names.
 /// </summary>
+[SuppressMessage("Design", "CA1034: Nested types should not be visible")]
 public static class LoggingScope
 {
     public static class User
