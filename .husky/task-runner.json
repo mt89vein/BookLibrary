@@ -24,7 +24,7 @@
          "name": "dotnet-test",
          "group": "pre-commit",
          "command": "dotnet",
-         "args": ["test", "--no-restore", "--no-build", "--filter", "\"TestCategory=UnitTests\""],
+         "args": ["test", "--no-restore", "--no-build", "--filter", "\"TestCategory=UnitTests | ArchTests\""],
          "include": ["**/*.cs"]
       }
    ]

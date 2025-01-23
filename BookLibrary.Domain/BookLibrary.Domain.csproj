@@ -10,37 +10,4 @@
     <ProjectReference Include="..\Seedwork\SeedWork.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="ErrorCodes.cs">
-      <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-    </Compile>
-    <Compile Update="Aggregates\Books\ValueObjects\BookId.cs">
-      <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-    </Compile>
-    <Compile Update="Aggregates\Books\ValueObjects\Author.cs">
-      <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-    </Compile>
-    <Compile Update="Aggregates\Books\ValueObjects\Isbn.cs">
-      <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-    </Compile>
-    <Compile Update="Aggregates\Abonents\ValueObjects\AbonentName.cs">
-      <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-    </Compile>
-    <Compile Update="Aggregates\Books\Events\BookBorrowedEvent.cs">
-      <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-    </Compile>
-    <Compile Update="Aggregates\Books\Events\BookReturnedEvent.cs">
-      <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-    </Compile>
-    <Compile Update="Aggregates\Books\ValueObjects\BorrowInfo.cs">
-      <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Aggregates\Abonents\ValueObjects\AbonentId.cs">
-      <Generator>MSBuild:GenerateCodeFromAttributes</Generator>
-    </Compile>
-  </ItemGroup>
-
 </Project>

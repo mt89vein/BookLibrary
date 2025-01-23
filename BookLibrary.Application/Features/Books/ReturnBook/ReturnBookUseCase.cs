@@ -1,4 +1,3 @@
-using BookLibrary.Application.Features.Books.BorrowBook;
 using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
@@ -23,12 +22,12 @@ public sealed partial class ReturnBookUseCase
 {
     private readonly IApplicationContext _ctx;
     private readonly TimeProvider _timeProvider;
-    private readonly ILogger<BorrowBookUseCase> _logger;
+    private readonly ILogger<ReturnBookUseCase> _logger;
 
     public ReturnBookUseCase(
         IApplicationContext ctx,
         TimeProvider timeProvider,
-        ILogger<BorrowBookUseCase> logger
+        ILogger<ReturnBookUseCase> logger
     )
     {
         _ctx = ctx;
