@@ -11,13 +11,13 @@
     <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.3" />
     <PackageVersion Include="Npgsql.OpenTelemetry" Version="9.0.1" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.1" />
     <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.8.0-rc.1" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.11.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.10.1" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.11.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.0.0-beta.12" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.10.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.10.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.11.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.11.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageVersion Include="Sstv.DomainExceptions.Extensions.DependencyInjection" Version="3.0.0" />
     <PackageVersion Include="Sstv.DomainExceptions.Extensions.ProblemDetails" Version="3.0.0" />
@@ -28,23 +28,23 @@
     <PackageVersion Include="Mediator.Abstractions" Version="2.1.7" />
     <PackageVersion Include="Mediator.SourceGenerator" Version="2.1.7" />
     <PackageVersion Include="Sstv.DomainExceptions" Version="3.0.0" />
-    <PackageVersion Include="TngTech.ArchUnitNET.NUnit" Version="0.11.1" />
-    <PackageVersion Include="UUIDNext" Version="4.0.0" />
+    <PackageVersion Include="TngTech.ArchUnitNET.NUnit" Version="0.11.2" />
+    <PackageVersion Include="UUIDNext" Version="4.1.1" />
     <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageVersion Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
   <ItemGroup Label="Testing">
-    <PackageVersion Include="coverlet.collector" Version="6.0.3">
+    <PackageVersion Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageVersion Include="NUnit" Version="4.3.2" />
     <PackageVersion Include="NUnit.Analyzers" Version="4.6.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup Label="Swagger">
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.2.0" />
@@ -55,12 +55,12 @@
   </ItemGroup>
   <ItemGroup Label="Microsoft">
     <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
-    <PackageVersion Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.1" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Analyzers" Version="9.0.1" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
+    <PackageVersion Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Analyzers" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.1" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.2" />
   </ItemGroup>
 </Project>
