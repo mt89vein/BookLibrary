@@ -1,4 +1,5 @@
-﻿using BookLibrary.Application.Infrastructure;
+using BookLibrary.Application.Extensions;
+using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.ValueObjects;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -42,7 +43,9 @@ public sealed class AccountController : ControllerBase
 
         var emailVo = new Email(email);
 
-        var abonent = await ctx.Abonents.FirstOrDefaultAsync(x => x.Email == emailVo);
+        var abonent = await ctx.Abonents
+            .TagWithFileMember()
+            .FirstOrDefaultAsync(x => x.Email == emailVo);
 
         if (abonent is null)
         {

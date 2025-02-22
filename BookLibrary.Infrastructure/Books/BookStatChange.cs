@@ -1,3 +1,4 @@
+using BookLibrary.Application.Extensions;
 using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Infrastructure.Extensions;
@@ -84,6 +85,7 @@ internal sealed class BookStatChangeApplier : IOutboxItemBatchHandler<BookStatCh
         }
 
         var bookStats = await _ctx.BookStats
+            .TagWithFileMember()
             .AsTracking()
             .Where(bookStatPredicate)
             .ToArrayAsync(ct);
@@ -115,6 +117,7 @@ internal sealed class BookStatChangeApplier : IOutboxItemBatchHandler<BookStatCh
 
         var bookInfo = await _ctx
             .Books
+            .TagWithFileMember()
             .Where(bookPredicate)
             .GroupBy(x => new { Isbn = (string)x.Isbn, PublicationDate = (DateOnly)x.PublicationDate })
             .Select(x => x.First())

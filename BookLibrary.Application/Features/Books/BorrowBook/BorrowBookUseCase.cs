@@ -1,3 +1,4 @@
+using BookLibrary.Application.Extensions;
 using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
@@ -118,6 +119,7 @@ public sealed partial class BorrowBookUseCase
         {
             var bookById = await _ctx.Books
                 .AsTracking()
+                .TagWithFileMember()
                 .FirstOrDefaultAsync(
                     x => x.Id == new BookId(command.BookId.Value),
                     ct
@@ -130,6 +132,7 @@ public sealed partial class BorrowBookUseCase
 
         var book = await _ctx.Books
             .AsTracking()
+            .TagWithFileMember()
             .FirstOrDefaultAsync(
                 x => x.Isbn == new Isbn(command.Isbn!) &&
                      (command.PublicationDate == null ||
@@ -152,7 +155,9 @@ public sealed partial class BorrowBookUseCase
     {
         var abonentId = new AbonentId(command.AbonentId);
 
-        var booksCount = await _ctx.Books.CountAsync(
+        var booksCount = await _ctx.Books
+            .TagWithFileMember()
+            .CountAsync(
             x => x.BorrowInfo != null &&
                  x.BorrowInfo.AbonentId == abonentId,
             ct

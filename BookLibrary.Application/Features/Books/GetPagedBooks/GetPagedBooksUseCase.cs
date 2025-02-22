@@ -1,4 +1,5 @@
 using BookLibrary.Application.Dto;
+using BookLibrary.Application.Extensions;
 using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Domain.Exceptions;
@@ -55,7 +56,7 @@ public sealed partial class GetPagedBooksUseCase
         {
             GettingBooksPage();
 
-            var queryable = _ctx.BookStats.AsQueryable();
+            var queryable = _ctx.BookStats.TagWithFileMember();
 
             if (!string.IsNullOrWhiteSpace(query.Isbn))
             {

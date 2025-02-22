@@ -1,8 +1,10 @@
+using BookLibrary.Application.Extensions;
 using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Domain.Exceptions;
 using FluentResults;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BookLibrary.Application.Features.Books.GetBook;
@@ -83,7 +85,7 @@ public sealed partial class GetBookUseCase
     /// <returns>Book or failed result.</returns>
     private async ValueTask<Result<Book>> FetchBookByIdAsync(BookId bookId, CancellationToken ct)
     {
-        var bookById = await _ctx.Books.FindAsync([bookId], ct);
+        var bookById = await _ctx.Books.TagWithFileMember().FirstOrDefaultAsync(x => x.Id == bookId, ct);
 
         return bookById is not null
             ? Result.Ok(bookById)

@@ -1,3 +1,4 @@
+using BookLibrary.Application.Extensions;
 using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
@@ -54,9 +55,7 @@ public sealed partial class GetBorrowedBooksUseCase
         {
             GettingBorrowedBooksByAbonentId(abonentId);
 
-            var books = await _ctx.Books
-                .Where(x => x.BorrowInfo != null && x.BorrowInfo.AbonentId == abonentId)
-                .ToArrayAsync(cancellationToken: ct);
+            var books = await FetchBorrowedBooksByAbonentId(abonentId, ct);
 
             GetBorrowedBooksSucceeded(abonentId);
 
@@ -68,6 +67,20 @@ public sealed partial class GetBorrowedBooksUseCase
                 .Fail(ErrorCodes.BorrowedBooksGettingFailed.ToDomainError(e))
                 .Log(nameof(GetBorrowedBooksUseCase));
         }
+    }
+
+    /// <summary>
+    /// Returns books borrowed by abonent.
+    /// </summary>
+    /// <param name="abonentId">Abonent identifier.</param>
+    /// <param name="ct">Token for cancel operation.</param>
+    /// <returns>Borrowed books.</returns>
+    private Task<Book[]> FetchBorrowedBooksByAbonentId(AbonentId abonentId, CancellationToken ct)
+    {
+        return _ctx.Books
+            .TagWithFileMember()
+            .Where(x => x.BorrowInfo != null && x.BorrowInfo.AbonentId == abonentId)
+            .ToArrayAsync(cancellationToken: ct);
     }
 
     [LoggerMessage(

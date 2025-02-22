@@ -1,3 +1,4 @@
+using BookLibrary.Application.Extensions;
 using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
@@ -99,8 +100,8 @@ public sealed partial class ReturnBookUseCase
     private async ValueTask<Result<Book>> FetchBookByIdAsync(BookId bookId, CancellationToken ct)
     {
         var bookById = await _ctx.Books
-            .AsQueryable()
             .AsTracking()
+            .TagWithFileMember()
             .FirstOrDefaultAsync(x => x.Id == bookId, ct);
 
         return bookById is not null
