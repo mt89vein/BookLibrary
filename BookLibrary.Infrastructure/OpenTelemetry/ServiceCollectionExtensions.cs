@@ -1,7 +1,8 @@
-﻿using BookLibrary.Application.Infrastructure;
+using BookLibrary.Application.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Sstv.DomainExceptions.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Metrics;
@@ -19,7 +20,7 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="services">Service registrator.</param>
     /// <returns>Service registrator.</returns>
-    public static IServiceCollection AddMetricCollector(this IServiceCollection services)
+    public static IServiceCollection AddTelemetry(this IServiceCollection services)
     {
         services.AddSingleton<IMetricCollector, MetricCollector>();
 
@@ -41,6 +42,14 @@ public static class ServiceCollectionExtensions
                 b.AddMeter("Microsoft.AspNetCore.RateLimiting");
 
                 b.AddPrometheusExporter();
+            })
+            .WithTracing(b =>
+            {
+                b.AddAspNetCoreInstrumentation();
+                b.AddEntityFrameworkCoreInstrumentation();
+                b.AddHttpClientInstrumentation();
+                b.SetErrorStatusOnException();
+                b.AddConsoleExporter();
             });
 
         return services;

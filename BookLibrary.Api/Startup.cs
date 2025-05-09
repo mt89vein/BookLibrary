@@ -26,7 +26,7 @@ public class Startup
         services.AddApplication();
         services.AddMediator(o => o.ServiceLifetime = ServiceLifetime.Scoped);
         services.AddEntityFramework();
-        services.AddMetricCollector();
+        services.AddTelemetry();
         services.AddHealthChecking();
     }
 
