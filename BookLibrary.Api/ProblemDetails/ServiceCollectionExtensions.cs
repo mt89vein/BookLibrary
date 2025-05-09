@@ -47,10 +47,30 @@ public static class ServiceCollectionExtensions
             {
                 var exceptionLogger = sp.GetRequiredService<ILogger<DomainException>>();
 
-                settings.OnErrorCreated += (errorDescription, exception) =>
+                settings.OnErrorCreated += (errorDescription, error) =>
                 {
-                    if (exception is DomainException domainException)
+                    Activity.Current?.AddTag("error.description", errorDescription.Description);
+                    Activity.Current?.AddTag("error.code", errorDescription.ErrorCode);
+                    Activity.Current?.AddTag("error.level", Enum.GetName(errorDescription.Level));
+
+                    if (error is DomainErrorResult err)
                     {
+                        if (err.InnerException is not null)
+                        {
+                            Activity.Current?.AddException(err.InnerException);
+                        }
+                        Activity.Current?.AddTag("error.id", err.ErrorId.ToString());
+                    }
+
+                    if (error is DomainException domainException)
+                    {
+                        Activity.Current?.AddException(domainException);
+
+                        if (domainException.Data.Contains("ErrorId"))
+                        {
+                            Activity.Current?.AddTag("error.id", domainException.Data["ErrorId"]);
+                        }
+
                         var loglevel = errorDescription.Level switch
                         {
                             Level.Undefined => LogLevel.None,
