@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
@@ -48,6 +48,7 @@ internal sealed class SwaggerConfigureOptions : IConfigureOptions<SwaggerGenOpti
         options.ExampleFilters();
         options.AddServer(new OpenApiServer { Description = "BookLibrary API", Url = pathBase });
 
+        options.OperationFilter<MultipleProducesOperationFilter>();
         options.AddEnumsWithValuesFixFilters(o =>
         {
             o.DescriptionSource = DescriptionSources.DescriptionAttributesThenXmlComments;

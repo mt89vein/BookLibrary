@@ -1,5 +1,7 @@
 using BookLibrary.Api.Extensions;
+using BookLibrary.Api.Swagger;
 using BookLibrary.Application.Features.Books.GetBook;
+using BookLibrary.Domain.Exceptions;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using Sstv.DomainExceptions.Extensions.ProblemDetails;
@@ -26,7 +28,8 @@ public sealed class GetBookController : ApiController
     /// <param name="useCase">UseCase - get book by id.</param>
     /// <param name="ct">Token for cancel operation.</param>
     [HttpGet]
-    [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(BookDto))]
+    [SwaggerErrorCodeResponse(ErrorCodes.BookNotFound)]
+    [SwaggerOkResponse<BookDto>]
     [SwaggerResponseExample(StatusCodes.Status200OK, typeof(BookDtoExample))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "In case bad request parameters", typeof(ErrorCodeProblemDetails))]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, "In case server error", typeof(ErrorCodeProblemDetails))]
