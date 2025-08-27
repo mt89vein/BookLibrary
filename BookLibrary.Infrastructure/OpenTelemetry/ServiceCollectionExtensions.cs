@@ -31,10 +31,10 @@ public static class ServiceCollectionExtensions
                 builder.AddService("BookLibrary");
             }).WithMetrics(b =>
             {
+                b.AddMeter("BookLibrary.*");
                 b.AddRuntimeInstrumentation();
                 b.AddHttpClientInstrumentation();
                 b.AddAspNetCoreInstrumentation();
-                b.AddMeter(MetricCollector.MeterName);
                 b.AddDomainExceptionInstrumentation();
                 b.AddMeter("Microsoft.AspNetCore.Hosting");
                 b.AddMeter("Microsoft.AspNetCore.Http.Connections");
@@ -87,17 +87,12 @@ internal sealed class MetricCollector : IMetricCollector, IDisposable
     private readonly Counter<long> _abonentRegisteredCount;
 
     /// <summary>
-    /// The name of meter.
-    /// </summary>
-    public static string MeterName { get; set; } = "BookLibrary";
-
-    /// <summary>
     /// Creates new instance of <see cref="MetricCollector"/>.
     /// </summary>
     /// <param name="meterFactory">Factory of meters.</param>
     public MetricCollector(IMeterFactory meterFactory)
     {
-        _meter = meterFactory.Create(MeterName, "1.0.0");
+        _meter = meterFactory.Create("BookLibrary", "1.0.0");
 
         _bookCreatedCount = _meter.CreateCounter<long>(name: "bl.books.created", description: "Counts created books.");
         _bookBorrowedCount = _meter.CreateCounter<long>(name: "bl.books.borrowed", description: "Counts books that was borrowed.");
