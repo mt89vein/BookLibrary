@@ -1,7 +1,9 @@
 using BookLibrary.Application.Infrastructure;
 using BookLibrary.Infrastructure.Books;
+using BookLibrary.Infrastructure.OpenTelemetry;
 using BookLibrary.Infrastructure.ValueConverters;
 using EntityFramework.Exceptions.PostgreSQL;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -28,6 +30,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IUuidGenerator, UuidGenerator>();
         services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<ExceptionTracker>();
+        services.AddHostedService<ExceptionTrackerLifecycle>();
 
         services.AddOutboxItem<ApplicationContext, BookStatChange>(o =>
             {
