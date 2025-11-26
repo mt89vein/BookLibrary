@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -11,7 +15,7 @@ namespace BookLibrary.Api.Swagger;
 /// Extensions methods for <see cref="IServiceCollection"/>.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class ServiceCollectionExtensions
+internal static class ServiceCollectionExtensions
 {
     /// <summary>
     /// Register swagger.
@@ -21,7 +25,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
         services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerConfigureOptions>();
-        services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
+        services.AddSwaggerExamplesFromAssemblies(Assembly.GetExecutingAssembly());
 
         return services.AddSwaggerGen();
     }

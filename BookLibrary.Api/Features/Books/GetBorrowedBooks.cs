@@ -1,6 +1,7 @@
 using BookLibrary.Api.Extensions;
 using BookLibrary.Application.Features.Books.GetBorrowedBooks;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sstv.DomainExceptions.Extensions.ProblemDetails;
 using Swashbuckle.AspNetCore.Annotations;

@@ -3,6 +3,7 @@ using BookLibrary.Api.Swagger;
 using BookLibrary.Application.Features.Books.GetBook;
 using BookLibrary.Domain.Exceptions;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sstv.DomainExceptions.Extensions.ProblemDetails;
 using Swashbuckle.AspNetCore.Annotations;

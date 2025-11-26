@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace BookLibrary.Api.HealthChecks;
+namespace BookLibrary.Infrastructure.HealthChecks;
 
 /// <summary>
 /// Health checks helpers.

@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
 
-namespace BookLibrary.Infrastructure.Extensions;
+namespace BookLibrary.Infrastructure;
 
 /// <summary>
 /// Extensions for <see cref="IHost"/>.

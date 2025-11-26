@@ -2,6 +2,8 @@ using BookLibrary.Api.ProblemDetails;
 using BookLibrary.Domain.Exceptions;
 using FluentResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Sstv.DomainExceptions;
 using Sstv.DomainExceptions.Extensions.ProblemDetails;
 using System.Diagnostics;

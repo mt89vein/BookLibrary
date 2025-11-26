@@ -1,7 +1,6 @@
 using BookLibrary.Application.Extensions;
 using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.Aggregates.Books;
-using BookLibrary.Infrastructure.Extensions;
 using JetBrains.Annotations;
 using Mediator;
 using Microsoft.EntityFrameworkCore;

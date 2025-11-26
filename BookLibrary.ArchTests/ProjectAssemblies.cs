@@ -11,6 +11,9 @@ internal static class ProjectAssemblies
     public static readonly Architecture Architecture = new ArchLoader()
         .LoadAssemblies(
             Assembly.Load("BookLibrary.Api"),
+            Assembly.Load("BookLibrary.Kafka"),
+            Assembly.Load("BookLibrary.BackgroundJobs"),
+            Assembly.Load("BookLibrary.Consumers"),
             Assembly.Load("BookLibrary.Infrastructure"),
             Assembly.Load("BookLibrary.Application"),
             Assembly.Load("BookLibrary.Domain")
@@ -25,6 +28,15 @@ internal static class ProjectAssemblies
 
     public static ArchUnitNET.Domain.Assembly InfrastructureAssembly { get; } =
         Architecture.Assemblies.First(x => x.Name.StartsWith("BookLibrary.Infrastructure"));
+
+    public static ArchUnitNET.Domain.Assembly ConsumersAssembly { get; } =
+        Architecture.Assemblies.First(x => x.Name.StartsWith("BookLibrary.Consumers"));
+
+    public static ArchUnitNET.Domain.Assembly BackgroundJobsAssembly { get; } =
+        Architecture.Assemblies.First(x => x.Name.StartsWith("BookLibrary.BackgroundJobs"));
+
+    public static ArchUnitNET.Domain.Assembly KafkaAssembly { get; } =
+        Architecture.Assemblies.First(x => x.Name.StartsWith("BookLibrary.Kafka"));
 
     public static ArchUnitNET.Domain.Assembly ApiAssembly { get; } =
         Architecture.Assemblies.First(x => x.Name.StartsWith("BookLibrary.Api"));

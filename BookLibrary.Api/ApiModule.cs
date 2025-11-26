@@ -1,25 +1,57 @@
-﻿using BookLibrary.Api.ProblemDetails;
+﻿using BookLibrary.Api.Auth;
+using BookLibrary.Api.ProblemDetails;
+using BookLibrary.Api.Swagger;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace BookLibrary.Api.Extensions;
+namespace BookLibrary.Api;
 
-/// <summary>
-/// Extensions methods for <see cref="IServiceCollection"/>.
-/// </summary>
-public static class ServiceCollectionExtensions
+public static class ApiModule
 {
+    public static void Register(WebApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        builder.Services.AddSwagger();
+        builder.AddApiControllers();
+        builder.AddMockAuthentication();
+    }
+
+    public static void MapEndpoints(WebApplication app)
+    {
+        ArgumentNullException.ThrowIfNull(app);
+
+        app.MapSwaggerUI(app);
+        app.MapControllers().RequireAuthorization();
+    }
+
+    /// <summary>
+    /// Adds authentication mock.
+    /// </summary>
+    private static void AddMockAuthentication(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddAuthentication()
+            .AddScheme<MockEmailAuthenticationOptions, MockEmailAuthenticationHandler>(
+                MockAuthenticationConstants.SCHEME_NAME,
+                MockAuthenticationConstants.SCHEME_NAME,
+                null
+            );
+    }
+
     /// <summary>
     /// Registeres API controllers.
     /// </summary>
-    /// <param name="services">Service registrator.</param>
     /// <returns>Service registrator.</returns>
-    public static IServiceCollection AddApiControllers(this IServiceCollection services)
+    private static void AddApiControllers(this WebApplicationBuilder builder)
     {
-        return services
+        builder
+            .Services
             .AddFluentValidationAutoValidation(o =>
             {
                 o.DisableDataAnnotationsValidation = true;
@@ -40,7 +72,6 @@ public static class ServiceCollectionExtensions
                 o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                 o.AllowInputFormatterExceptionMessages = false;
-            })
-            .Services;
+            });
     }
 }

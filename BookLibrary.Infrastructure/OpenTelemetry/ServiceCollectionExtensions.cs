@@ -13,7 +13,7 @@ namespace BookLibrary.Infrastructure.OpenTelemetry;
 /// Extension methods for <see cref="IServiceCollection"/>.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class ServiceCollectionExtensions
+internal static class ServiceCollectionExtensions
 {
     /// <summary>
     /// Registeres metric collectors.

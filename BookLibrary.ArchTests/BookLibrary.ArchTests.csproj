@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BookLibrary.Api\BookLibrary.Api.csproj" />
+      <ProjectReference Include="..\BookLibrary.Host\BookLibrary.Host.csproj" />
     </ItemGroup>
 
   <Target Name="DisableAnalyzers"

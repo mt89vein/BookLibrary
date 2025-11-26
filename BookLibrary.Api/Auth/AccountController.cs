@@ -3,8 +3,10 @@ using BookLibrary.Application.Infrastructure;
 using BookLibrary.Domain.ValueObjects;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
@@ -70,26 +72,6 @@ public sealed class AccountController : ControllerBase
         await HttpContext.SignOutAsync(MockAuthenticationConstants.SCHEME_NAME);
 
         return Ok();
-    }
-}
-
-/// <summary>
-/// Extensions methods for <see cref="AddMockAuthentication"/>.
-/// </summary>
-public static class ServiceCollectionExtensions
-{
-    /// <summary>
-    /// Adds authentication mock.
-    /// </summary>
-    public static IServiceCollection AddMockAuthentication(this IServiceCollection services)
-    {
-        return services.AddAuthentication()
-            .AddScheme<MockEmailAuthenticationOptions, MockEmailAuthenticationHandler>(
-                MockAuthenticationConstants.SCHEME_NAME,
-                MockAuthenticationConstants.SCHEME_NAME,
-                null
-            )
-            .Services;
     }
 }
 

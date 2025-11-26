@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+      <ProjectReference Include="..\BookLibrary.Infrastructure\BookLibrary.Infrastructure.csproj" />
+      <ProjectReference Include="..\BookLibrary.Kafka\BookLibrary.Kafka.csproj" />
+    </ItemGroup>
+</Project>
