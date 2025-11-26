@@ -1,8 +1,9 @@
 using BookLibrary.Domain.Exceptions;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 using Sstv.DomainExceptions;
 
-namespace BookLibrary.Api.Extensions;
+namespace BookLibrary.Infrastructure.Logging;
 
 internal sealed partial class FluentLogger : IResultLogger
 {

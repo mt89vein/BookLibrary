@@ -1,6 +1,7 @@
-﻿using Sstv.DomainExceptions;
+﻿using Microsoft.Extensions.Logging;
+using Sstv.DomainExceptions;
 
-namespace BookLibrary.Api.Extensions;
+namespace BookLibrary.Infrastructure.Logging;
 
 /// <summary>
 /// Extensions methods for <see cref="ILogger"/>.

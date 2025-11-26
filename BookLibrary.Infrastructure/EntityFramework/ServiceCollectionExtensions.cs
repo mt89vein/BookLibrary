@@ -1,9 +1,6 @@
-using BookLibrary.Application.Infrastructure;
-using BookLibrary.Infrastructure.Books;
-using BookLibrary.Infrastructure.OpenTelemetry;
+﻿using BookLibrary.Application.Infrastructure;
 using BookLibrary.Infrastructure.ValueConverters;
 using EntityFramework.Exceptions.PostgreSQL;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -11,38 +8,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Npgsql;
-using Sstv.Outbox;
-using Sstv.Outbox.EntityFrameworkCore.Npgsql;
 
-namespace BookLibrary.Infrastructure;
+namespace BookLibrary.Infrastructure.EntityFramework;
 
-/// <summary>
-/// Extensions methods for <see cref="IServiceCollection"/>.
-/// </summary>
-public static class ServiceCollectionExtensions
+internal static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Adds infrastucture services.
-    /// </summary>
-    /// <param name="services">Service registrator.</param>
-    /// <returns>Service registrator.</returns>
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
-    {
-        services.AddSingleton<IUuidGenerator, UuidGenerator>();
-        services.AddSingleton(TimeProvider.System);
-        services.AddSingleton<ExceptionTracker>();
-        services.AddHostedService<ExceptionTrackerLifecycle>();
-
-        services.AddOutboxItem<ApplicationContext, BookStatChange>(o =>
-            {
-                o.OutboxItemsLimit = 1000;
-                o.WorkerType = EfCoreWorkerTypes.BatchStrictOrdering;
-            })
-            .WithBatchHandler<BookStatChange, BookStatChangeApplier>();
-
-        return services;
-    }
-
     /// <summary>
     /// Adds entity framework.
     /// </summary>

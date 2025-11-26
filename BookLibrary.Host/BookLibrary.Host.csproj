@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <PackageReference Include="Mediator.SourceGenerator"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BookLibrary.Api\BookLibrary.Api.csproj"/>
+    <ProjectReference Include="..\BookLibrary.BackgroundJobs\BookLibrary.BackgroundJobs.csproj"/>
+    <ProjectReference Include="..\BookLibrary.Consumers\BookLibrary.Consumers.csproj"/>
+  </ItemGroup>
+
+</Project>

@@ -1,16 +1,30 @@
-﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
-using static BookLibrary.Api.HealthChecks.HealthCheckHelper;
 
-namespace BookLibrary.Api.HealthChecks;
+namespace BookLibrary.Infrastructure.HealthChecks;
 
 /// <summary>
 /// Extension methods for <see cref="IServiceCollection"/>.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class ServiceCollectionExtensions
+internal static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Registeres graceful shutdown.
+    /// </summary>
+    /// <param name="services">Service registrator.</param>
+    /// <returns>Service registrator.</returns>
+    public static IServiceCollection AddGracefulShutdown(this IServiceCollection services)
+    {
+        return services.AddSingleton<IStartupFilter, GracefulShutdownStartupFilter>();
+    }
+
     /// <summary>
     /// Registeres health check services.
     /// </summary>
@@ -22,7 +36,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<LivenessProbe>();
         services.AddSingleton<StartupProbe>();
 
-        return services.AddHealthChecks()
+        return services
+            .AddHealthChecks()
             .AddCheck<ReadinessProbe>(nameof(ReadinessProbe), tags: ReadinessProbe.Tags)
             .AddCheck<LivenessProbe>(nameof(LivenessProbe), tags: LivenessProbe.Tags)
             .AddCheck<StartupProbe>(nameof(StartupProbe), tags: StartupProbe.Tags)
@@ -74,8 +89,8 @@ internal sealed class LivenessProbe : IHealthCheck
     )
     {
         return _hostApplicationLifetime.ApplicationStarted.IsCancellationRequested
-            ? Healthy
-            : Unhealthy;
+            ? HealthCheckHelper.Healthy
+            : HealthCheckHelper.Unhealthy;
     }
 }
 
@@ -100,8 +115,8 @@ internal sealed class ReadinessProbe : IHealthCheck
     {
         return _hostApplicationLifetime.ApplicationStarted.IsCancellationRequested &&
                !_hostApplicationLifetime.ApplicationStopping.IsCancellationRequested
-            ? Healthy
-            : Unhealthy;
+            ? HealthCheckHelper.Healthy
+            : HealthCheckHelper.Unhealthy;
     }
 }
 
@@ -125,7 +140,7 @@ internal sealed class StartupProbe : IHealthCheck
     )
     {
         return _hostApplicationLifetime.ApplicationStarted.IsCancellationRequested
-            ? Healthy
-            : Unhealthy;
+            ? HealthCheckHelper.Healthy
+            : HealthCheckHelper.Unhealthy;
     }
 }

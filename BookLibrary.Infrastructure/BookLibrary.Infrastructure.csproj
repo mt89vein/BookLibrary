@@ -19,9 +19,12 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
     <PackageReference Include="OpenTelemetry.Exporter.Console" />
-    <PackageReference Include="Sstv.DomainExceptions.Extensions.DependencyInjection" />
     <PackageReference Include="Sstv.Outbox.EntityFrameworkCore.Npgsql" />
+    <PackageReference Include="Sstv.DomainExceptions.Extensions.DependencyInjection" />
+    <PackageReference Include="Sstv.DomainExceptions.Extensions.ProblemDetails" />
+    <PackageReference Include="Sstv.DomainExceptions.Extensions.SerilogEnricher" />
     <PackageReference Include="UUIDNext" />
+    <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>
 
   <ItemGroup>

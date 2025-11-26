@@ -1,4 +1,5 @@
 using BookLibrary.Domain.Exceptions;
+using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
 namespace BookLibrary.Api.Extensions;

@@ -1,0 +1,51 @@
+@Url=http://localhost:50816
+@Login=my-email%40gmail.com
+
+POST {{Url}}/api/v1/account/login?email={{Login}}
+
+###
+
+POST {{Url}}/api/v1/account/logout
+
+###
+
+GET {{Url}}/api/v1/books/borrowed
+
+###
+
+POST {{Url}}/api/v1/books/search
+Content-Type: application/json
+
+{
+    "page": 1,
+    "pageSize": 10,
+    "title": "Domain"
+}
+
+###
+
+@isbn=9780134434421
+
+POST {{Url}}/api/v1/books/borrow
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="Isbn"
+Content-Type: text/plain
+
+{{isbn}}
+
+###
+
+@bookId=01961692-f39d-72b7-a314-8e39af572b95
+
+POST {{Url}}/api/v1/books/return
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="BookId"
+Content-Type: text/plain
+
+{{bookId}}
+
+###

@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace BookLibrary.Infrastructure.Extensions;
+namespace BookLibrary.Infrastructure;
 
 internal static class PredicateBuilder
 {

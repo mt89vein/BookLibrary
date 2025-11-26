@@ -1,4 +1,9 @@
-﻿namespace BookLibrary.Api.HealthChecks;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+
+namespace BookLibrary.Infrastructure.HealthChecks;
 
 /// <summary>
 /// Startup filter, that force to wait before shutdown.

@@ -1,6 +1,7 @@
 ﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "BookLibraryKestrel": {
+    "http": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "http://localhost:50816",

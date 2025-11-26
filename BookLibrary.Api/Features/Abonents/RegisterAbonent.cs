@@ -2,6 +2,7 @@ using BookLibrary.Application.Features.Abonents.RegisterAbonent;
 using FluentValidation;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sstv.DomainExceptions.Extensions.ProblemDetails;
 using Swashbuckle.AspNetCore.Annotations;
