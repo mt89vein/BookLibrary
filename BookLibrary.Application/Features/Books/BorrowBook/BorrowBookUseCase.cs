@@ -56,8 +56,10 @@ public sealed partial class BorrowBookUseCase
     /// </exception>
     public async Task<ResultBase> ExecuteAsync(BorrowBookCommand command, CancellationToken ct = default)
     {
+        // 1. validation (App). Verifying technical correctness
         ArgumentNullException.ThrowIfNull(command);
 
+        // 2. Enriching logs (App).
         using var _ = _logger.BeginScope(new Dictionary<string, object?>
         {
             [LoggingScope.Abonent.ID] = command.AbonentId.ToString(),
@@ -69,36 +71,52 @@ public sealed partial class BorrowBookUseCase
 
         try
         {
+            // 3. Write to log (App).
             BorrowBookRequestProcessing(command.BookId);
 
+            // 4. Fetching book from the database (App).
             var bookFetchResult = await FetchBookAsync(command, ct);
 
+            // 5. Error handling (App).
             if (bookFetchResult.IsFailed)
             {
                 return bookFetchResult.Log(nameof(BorrowBookUseCase));
             }
 
+            // 6. Fetching abonentment from the database (App).
             var abonement = await GetAbonenementAsync(command, ct);
 
+            // 7. Authorization (App). "Can user borrow book".
+            if (!_authService.CanBorrowBooks(command.AbonentId))
+            {
+                return Result.Fail("User not authorized to borrow books");
+            }
+
+            // 8. Calling domain logic (Domain)
             var borrowResult = bookFetchResult.Value.Borrow(
                 abonement,
                 borrowedAt: _timeProvider.GetUtcNow(),
                 command.ReturnDate
             );
 
+            // 9. Error handling (App).
             if (borrowResult.IsFailed)
             {
                 return borrowResult.Log(nameof(BorrowBookUseCase));
             }
 
+            // Write to log (App).
             BorrowBookRequestProcessed(bookFetchResult.Value.Id);
 
+            // 10. Saving to the database (App).
             await _ctx.SaveChangesAsync(ct);
 
+            // 11. Return some result (App).
             return Result.Ok();
         }
         catch (Exception e) when (e is not BookLibraryException)
         {
+            // 12. Error handling (App).
             return Result
                 .Fail(ErrorCodes.BookBorrowingFailed.ToDomainError(e))
                 .Log(nameof(BorrowBookUseCase));

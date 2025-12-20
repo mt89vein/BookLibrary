@@ -109,14 +109,16 @@ public sealed class Book : Entity
     {
         ArgumentNullException.ThrowIfNull(abonement);
 
-        // by default 30 days
+        // business rule: applying book library default policy - book borrowing for 30 days
         var returnBeforeDate = returnBefore ?? DateOnly.FromDateTime(borrowedAt.AddDays(30).Date);
 
+        // business rule: return date must be in the future
         if (DateOnly.FromDateTime(borrowedAt.Date) >= returnBeforeDate)
         {
             return ErrorCodes.InvalidBookBorrowingPeriod.ToDomainError();
         }
 
+        // business rule: this book must be available to borrow
         if (BorrowInfo is not null)
         {
             return BorrowInfo.AbonentId != abonement.AbonentId
@@ -124,14 +126,16 @@ public sealed class Book : Entity
                 : Result.Ok();
         }
 
+        // business rule: applying book library policy: no more than 3 books per abonent at the same time
         if (abonement.BorrowedBooksCount >= 3)
         {
             return ErrorCodes.TooManyBooksBorrowedAlready.ToDomainError();
         }
 
+        // changing book internal state (invariant)
         BorrowInfo = new BorrowInfo(abonement.AbonentId, borrowedAt, returnBeforeDate);
 
-        // hint: there we can check amortization percent of book before borrow
+        // registering domain event
         AddDomainEvent(new BookBorrowedEvent(Id, BorrowInfo.AbonentId, BorrowInfo.BorrowedAt, BorrowInfo.ReturnBefore));
 
         return Result.Ok();
