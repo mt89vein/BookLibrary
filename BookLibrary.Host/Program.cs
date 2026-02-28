@@ -39,6 +39,7 @@ try
     app.UseExceptionHandler();
     app.UseRouting();
 
+    app.UseCookiePolicy();
     app.UseAuthentication();
     app.UseAuthorization();
 
@@ -61,3 +62,5 @@ finally
 {
     await Log.CloseAndFlushAsync();
 }
+
+public class BookLibraryEntryPoint;

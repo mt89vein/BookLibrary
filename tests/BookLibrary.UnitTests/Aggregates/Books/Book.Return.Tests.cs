@@ -1,7 +1,8 @@
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Domain.Exceptions;
-using static BookLibrary.UnitTests.Aggregates.Books.BookBuilder;
+using BookLibrary.TestHelpers;
+using static BookLibrary.TestHelpers.BookBuilder;
 
 namespace BookLibrary.UnitTests.Aggregates.Books;
 

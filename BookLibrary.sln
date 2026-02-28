@@ -22,19 +22,29 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.Application", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.Infrastructure", "BookLibrary.Infrastructure\BookLibrary.Infrastructure.csproj", "{EC237A27-27E3-4A2E-8FCA-C9CE48EE1E63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.UnitTests", "BookLibrary.UnitTests\BookLibrary.UnitTests.csproj", "{9280DAA8-C486-4305-81C9-7F3969CA1D93}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.ArchTests", "BookLibrary.ArchTests\BookLibrary.ArchTests.csproj", "{03BCA6E9-1B07-4527-9527-86068B08EF23}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.Kafka", "BookLibrary.Kafka\BookLibrary.Kafka.csproj", "{487FFB93-2C76-4B76-8E50-D1A80C385653}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.BackgroundJobs", "BookLibrary.BackgroundJobs\BookLibrary.BackgroundJobs.csproj", "{F3B165BA-9388-46CE-A31A-2A6F113067E6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.Consumers", "BookLibrary.Consumers\BookLibrary.Consumers.csproj", "{9DBE4B81-05EA-426E-AF23-8051171ED395}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{64D434E8-4811-435F-AC22-EB2085063EA1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.Host", "BookLibrary.Host\BookLibrary.Host.csproj", "{8EFAAF4D-8190-4658-9D4E-59C58558F2CE}"
+EndProject
+
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{64D434E8-4811-435F-AC22-EB2085063EA1}"
+	ProjectSection(SolutionItems) = preProject
+		tests\.editorconfig = tests\.editorconfig
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.UnitTests", "tests\BookLibrary.UnitTests\BookLibrary.UnitTests.csproj", "{9280DAA8-C486-4305-81C9-7F3969CA1D93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.ArchTests", "tests\BookLibrary.ArchTests\BookLibrary.ArchTests.csproj", "{03BCA6E9-1B07-4527-9527-86068B08EF23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.IntegrationTests.NUnit", "tests\BookLibrary.IntegrationTests.NUnit\BookLibrary.IntegrationTests.NUnit.csproj", "{BC9025FE-554D-443E-B600-50BCA4D938F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.IntegrationTests.Infrastructure", "tests\BookLibrary.IntegrationTests.Infrastructure\BookLibrary.IntegrationTests.Infrastructure.csproj", "{1E5D8AE1-2C4F-44AE-BC40-BA6BAE477AB3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibrary.TestHelpers", "tests\BookLibrary.TestHelpers\BookLibrary.TestHelpers.csproj", "{8278F992-DD3A-4F8C-8C1C-17652BECBE27}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,6 +96,18 @@ Global
 		{8EFAAF4D-8190-4658-9D4E-59C58558F2CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EFAAF4D-8190-4658-9D4E-59C58558F2CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EFAAF4D-8190-4658-9D4E-59C58558F2CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC9025FE-554D-443E-B600-50BCA4D938F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC9025FE-554D-443E-B600-50BCA4D938F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC9025FE-554D-443E-B600-50BCA4D938F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC9025FE-554D-443E-B600-50BCA4D938F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E5D8AE1-2C4F-44AE-BC40-BA6BAE477AB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E5D8AE1-2C4F-44AE-BC40-BA6BAE477AB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E5D8AE1-2C4F-44AE-BC40-BA6BAE477AB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E5D8AE1-2C4F-44AE-BC40-BA6BAE477AB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8278F992-DD3A-4F8C-8C1C-17652BECBE27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8278F992-DD3A-4F8C-8C1C-17652BECBE27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8278F992-DD3A-4F8C-8C1C-17652BECBE27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8278F992-DD3A-4F8C-8C1C-17652BECBE27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,5 +118,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{03BCA6E9-1B07-4527-9527-86068B08EF23} = {64D434E8-4811-435F-AC22-EB2085063EA1}
 		{9280DAA8-C486-4305-81C9-7F3969CA1D93} = {64D434E8-4811-435F-AC22-EB2085063EA1}
+		{BC9025FE-554D-443E-B600-50BCA4D938F6} = {64D434E8-4811-435F-AC22-EB2085063EA1}
+		{1E5D8AE1-2C4F-44AE-BC40-BA6BAE477AB3} = {64D434E8-4811-435F-AC22-EB2085063EA1}
+		{8278F992-DD3A-4F8C-8C1C-17652BECBE27} = {64D434E8-4811-435F-AC22-EB2085063EA1}
 	EndGlobalSection
 EndGlobal

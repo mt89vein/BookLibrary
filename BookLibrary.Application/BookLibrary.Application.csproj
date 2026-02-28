@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <PackageReference Include="EntityFrameworkCore.Exceptions.PostgreSQL" />
+    <PackageReference Include="Microsoft.FeatureManagement" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="JetBrains.Annotations" />
   </ItemGroup>

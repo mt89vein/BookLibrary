@@ -1,6 +1,8 @@
+using BookLibrary.Application;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.FeatureManagement;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BookLibrary.Infrastructure;
@@ -20,9 +22,14 @@ public static class HostExtensions
     {
         ArgumentNullException.ThrowIfNull(host);
 
-        using var scope = host.Services.CreateScope();
-        await using var ctx = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+        var featureManager = host.Services.GetRequiredService<IFeatureManager>();
 
-        await ctx.Database.MigrateAsync(ct);
+        if (await featureManager.IsEnabledAsync(FeatureFlags.AUTO_MIGRATIONS_ENABLED))
+        {
+            using var scope = host.Services.CreateScope();
+            await using var ctx = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+
+            await ctx.Database.MigrateAsync(ct);
+        }
     }
 }

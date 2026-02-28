@@ -49,7 +49,7 @@ internal static class ServiceCollectionExtensions
                 b.AddEntityFrameworkCoreInstrumentation();
                 b.AddHttpClientInstrumentation();
                 b.SetErrorStatusOnException();
-                b.AddConsoleExporter();
+                // b.AddConsoleExporter();
             });
 
         return services;

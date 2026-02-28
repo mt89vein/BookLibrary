@@ -62,6 +62,11 @@ public abstract class ValueObject : IEquatable<ValueObject>
     /// </summary>
     protected static bool EqualOperator(ValueObject? left, ValueObject? right)
     {
+        if (left is null && right is null)
+        {
+            return true;
+        }
+
         if (left is null ^ right is null)
         {
             return false;

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.FeatureManagement;
 using Serilog;
 using Serilog.Formatting.Json;
 using Sstv.DomainExceptions.Extensions.DependencyInjection;
@@ -26,6 +27,7 @@ public static class InfrastructureModule
     {
         ArgumentNullException.ThrowIfNull(builder);
 
+        builder.Services.AddFeatureManagement();
         builder.Services.AddTelemetry();
         builder.Services.AddGracefulShutdown();
         builder.Services.AddHealthChecking();
@@ -51,7 +53,7 @@ public static class InfrastructureModule
             c.Enrich.WithProperty("Host", builder.Configuration.GetValue("HOSTNAME", Dns.GetHostName()));
             // add here env etc
             c.Enrich.WithDomainException();
-        });
+        }, preserveStaticLogger: true);
     }
 
     public static void MapEndpoints(WebApplication app)

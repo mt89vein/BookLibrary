@@ -1,8 +1,10 @@
-﻿using BookLibrary.Api.Auth;
+using BookLibrary.Api.Auth;
 using BookLibrary.Api.ProblemDetails;
 using BookLibrary.Api.Swagger;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +37,12 @@ public static class ApiModule
     /// </summary>
     private static void AddMockAuthentication(this WebApplicationBuilder builder)
     {
+        builder.Services.AddCookiePolicy(p =>
+        {
+            p.HttpOnly = HttpOnlyPolicy.Always;
+            p.Secure = CookieSecurePolicy.Always;
+        });
+
         builder.Services
             .AddAuthentication()
             .AddScheme<MockEmailAuthenticationOptions, MockEmailAuthenticationHandler>(

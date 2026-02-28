@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <ImplicitUsings>enable</ImplicitUsings>
+      <Nullable>enable</Nullable>
+      <NoWarn>CS1591</NoWarn>
+      <IsPackable>false</IsPackable>
+      <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+      <PackageReference Include="Respawn" />
+      <PackageReference Include="coverlet.msbuild">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="coverlet.collector">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="JunitXml.TestLogger" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" />
+      <PackageReference Include="NUnit" />
+      <PackageReference Include="NUnit3TestAdapter" />
+      <PackageReference Include="NUnit.Analyzers">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Testcontainers.PostgreSql" />
+      <PackageReference Include="Verify.EntityFramework" />
+      <PackageReference Include="Verify.Http" />
+      <PackageReference Include="Verify.NUnit" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\BookLibrary.Host\BookLibrary.Host.csproj" />
+      <ProjectReference Include="..\BookLibrary.IntegrationTests.Infrastructure\BookLibrary.IntegrationTests.Infrastructure.csproj" />
+      <ProjectReference Include="..\BookLibrary.TestHelpers\BookLibrary.TestHelpers.csproj" />
+    </ItemGroup>
+
+    <Target Name="DisableAnalyzers"
+            BeforeTargets="CoreCompile">
+      <ItemGroup>
+        <Analyzer Remove="@(Analyzer)"
+                  Condition="'%(Filename)' == 'Mediator.SourceGenerator.Implementation'"/>
+        <Analyzer Remove="@(Analyzer)"
+                  Condition="'%(Filename)' == 'Mediator.SourceGenerator.Roslyn40'"/>
+      </ItemGroup>
+    </Target>
+
+</Project>
