@@ -1,4 +1,4 @@
-﻿using BookLibrary.Application.Infrastructure;
+using BookLibrary.Application.Infrastructure;
 using BookLibrary.Infrastructure.ValueConverters;
 using EntityFramework.Exceptions.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Npgsql;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 
 namespace BookLibrary.Infrastructure.EntityFramework;
 
@@ -20,8 +21,6 @@ internal static class ServiceCollectionExtensions
     /// <returns>Service registrator.</returns>
     public static IServiceCollection AddEntityFramework(this IServiceCollection services)
     {
-        NpgsqlDataSource? npgsqlDataSource = null; // should be singleton
-
         services
             .AddTransient<IConfigureOptions<ApplicationContextSettings>, ConfigureApplicationContextSettings>()
             .AddOptions<ApplicationContextSettings>()
@@ -44,24 +43,43 @@ internal static class ServiceCollectionExtensions
                         .EnableSensitiveDataLogging();
                 }
 
-                options.ConfigureWarnings(w => w.Ignore(CoreEventId.FirstWithoutOrderByAndFilterWarning));
-
-                npgsqlDataSource ??= new NpgsqlDataSourceBuilder(config.Value.ConnectionString)
-                    .EnableDynamicJson()
-                    .BuildMultiHost()
-                    .WithTargetSession(TargetSessionAttributes.Primary);
-
                 options
+                    .ConfigureWarnings(w => w.Ignore(CoreEventId.FirstWithoutOrderByAndFilterWarning))
                     .ReplaceService<IValueConverterSelector, ValueObjectsConverterSelectorByConvention>()
                     .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-                    .UseNpgsql(npgsqlDataSource, builder =>
-                    {
-                        builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-                        builder.MigrationsAssembly(typeof(ApplicationContext).Assembly.GetName().Name);
-                        builder.MigrationsHistoryTable("__EFMigrationHistory", ApplicationContext.DefaultScheme);
-                    })
                     .UseSnakeCaseNamingConvention()
                     .UseExceptionProcessor();
+
+                var accessor = sp.GetService<NpgsqlDataSourceAccessor>();
+
+                if (accessor is not null)
+                {
+                    options.UseNpgsql(accessor.NpgsqlDataSource, b =>
+                    {
+                        b.ConfigureNpgsql();
+                    });
+                }
+                else
+                {
+                    options.UseNpgsql(config.Value.ConnectionString, b =>
+                    {
+                        b.ConfigureNpgsql();
+                        b.ConfigureDataSource(ds => ds
+                            .EnableDynamicJson()
+                            .BuildMultiHost()
+                            .WithTargetSession(TargetSessionAttributes.Primary)
+                        );
+                    });
+                }
             });
     }
+
+    private static void ConfigureNpgsql(this NpgsqlDbContextOptionsBuilder b)
+    {
+        b.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+        b.MigrationsAssembly(typeof(ApplicationContext).Assembly.GetName().Name);
+        b.MigrationsHistoryTable("__EFMigrationHistory", ApplicationContext.DefaultScheme);
+    }
 }
+
+public sealed record NpgsqlDataSourceAccessor(NpgsqlDataSource NpgsqlDataSource);

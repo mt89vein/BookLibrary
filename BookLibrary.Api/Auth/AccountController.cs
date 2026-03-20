@@ -119,13 +119,7 @@ internal sealed class MockEmailAuthenticationHandler : SignInAuthenticationHandl
     {
         Context.Response.Cookies.Append(
             key: MockAuthenticationConstants.SESSION_COOKIE_NAME,
-            value: JsonSerializer.Serialize(user.Claims.Select(x => new MyClaim(x.Type, x.Value))),
-            new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict
-            });
+            value: JsonSerializer.Serialize(user.Claims.Select(x => new MyClaim(x.Type, x.Value))));
 
         return Task.CompletedTask;
     }

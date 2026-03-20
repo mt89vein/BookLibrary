@@ -1,6 +1,6 @@
 using BookLibrary.Domain.Aggregates.Abonents;
 using BookLibrary.Domain.Aggregates.Books;
-using static BookLibrary.UnitTests.Aggregates.Books.BookBuilder;
+using static BookLibrary.TestHelpers.BookBuilder;
 
 namespace BookLibrary.UnitTests.Aggregates.Books;
 

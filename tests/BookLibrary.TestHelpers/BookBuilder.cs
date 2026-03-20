@@ -3,7 +3,7 @@ using BookLibrary.Domain.Aggregates.Books;
 using BookLibrary.Domain.ValueObjects;
 using System.Diagnostics.CodeAnalysis;
 
-namespace BookLibrary.UnitTests.Aggregates.Books;
+namespace BookLibrary.TestHelpers;
 
 /// <summary>
 /// Builder that simplifies creation of book for tests.
@@ -21,15 +21,19 @@ public sealed class BookBuilder
     private AbonentId? _borrowedBy;
     private DateTimeOffset? _borrowedAt;
     private DateTimeOffset? _returnBefore;
+    private readonly TimeProvider? _timeProvider;
 
-    public BookBuilder()
+    public BookBuilder(TimeProvider? timeProvider = null)
     {
+        _timeProvider = timeProvider;
+        var now = GetNow();
+
         _bookId = new BookId(Guid.NewGuid());
         _bookTitle = new BookTitle("Dummy book title");
         _isbn = new Isbn("9780134434421");
-        _publicationDate = new BookPublicationDate(DateOnly.FromDateTime(DateTimeOffset.UtcNow.UtcDateTime));
+        _publicationDate = new BookPublicationDate(DateOnly.FromDateTime(now.UtcDateTime));
         _authors = [new Author("Dummy Author Name", "Dummy Author Surname")];
-        _createdAt = DateTimeOffset.UtcNow;
+        _createdAt = now;
     }
 
     public static Book CreateBook(bool clearDomainEvents = false)
@@ -82,7 +86,7 @@ public sealed class BookBuilder
     public BookBuilder SetBorrowedBy(AbonentId borrowedBy, DateTimeOffset? borrowedAt = null, DateTimeOffset? returnBefore = null)
     {
         _borrowedBy = borrowedBy;
-        _borrowedAt = borrowedAt ?? DateTimeOffset.UtcNow;
+        _borrowedAt = borrowedAt ?? GetNow();
         _returnBefore = returnBefore ?? _borrowedAt.Value.AddDays(5);
 
         return this;
@@ -96,7 +100,7 @@ public sealed class BookBuilder
         {
             book.Borrow(
                 abonement: new Abonement(_borrowedBy.Value, 0),
-                borrowedAt: _borrowedAt ?? DateTimeOffset.UtcNow,
+                borrowedAt: _borrowedAt ?? GetNow(),
                 returnBefore: DateOnly.FromDateTime(_returnBefore.Value.DateTime)
             );
         }
@@ -107,5 +111,10 @@ public sealed class BookBuilder
         }
 
         return book;
+    }
+
+    private DateTimeOffset GetNow()
+    {
+        return _timeProvider?.GetUtcNow() ?? DateTimeOffset.UtcNow;
     }
 }

@@ -1,0 +1,24 @@
+﻿{
+  Status: 200 OK,
+  Content: {
+    Headers: {
+      Content-Length: 236,
+      Content-Type: application/json; charset=utf-8
+    },
+    Value: {
+      id: Guid_1,
+      title: Dummy book title,
+      isbn: 9780134434421,
+      publicationDate: 2026-03-11,
+      authors: [
+        {
+          name: Dummy Author Name,
+          surname: Dummy Author Surname
+        }
+      ],
+      borrowInfo: {
+        status: Available
+      }
+    }
+  }
+}

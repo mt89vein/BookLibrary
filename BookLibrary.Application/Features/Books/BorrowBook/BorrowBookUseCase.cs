@@ -117,11 +117,12 @@ public sealed partial class BorrowBookUseCase
     {
         if (command.BookId.HasValue)
         {
+            var bookId = new BookId(command.BookId.Value);
             var bookById = await _ctx.Books
                 .AsTracking()
                 .TagWithFileMember()
                 .FirstOrDefaultAsync(
-                    x => x.Id == new BookId(command.BookId.Value),
+                    x => x.Id == bookId,
                     ct
                 );
 
@@ -130,13 +131,17 @@ public sealed partial class BorrowBookUseCase
                 : ErrorCodes.BookNotFound.ToDomainError();
         }
 
+        var isbn = new Isbn(command.Isbn!);
+        var publicationDate = command.PublicationDate.HasValue
+            ? new BookPublicationDate(command.PublicationDate.Value)
+            : null;
+
         var book = await _ctx.Books
             .AsTracking()
             .TagWithFileMember()
             .FirstOrDefaultAsync(
-                x => x.Isbn == new Isbn(command.Isbn!) &&
-                     (command.PublicationDate == null ||
-                      x.PublicationDate == new BookPublicationDate(command.PublicationDate.Value)) &&
+                x => x.Isbn == isbn &&
+                     (publicationDate == null || x.PublicationDate == publicationDate) &&
                      x.BorrowInfo == null,
                 ct
             );
